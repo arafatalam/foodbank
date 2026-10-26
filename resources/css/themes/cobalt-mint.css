@@ -1,4 +1,4 @@
-/* Cobalt & Mint: shared theme values.
+/* Cobalt & Sky Blue: shared theme values.
  * app.css connects these to Tailwind classes such as bg-primary.
  * Keep colour choices here and use named classes in Vue components.
  */
@@ -6,22 +6,22 @@
     color-scheme: light;
 
     /* Page, cards, menus, and their text. */
-    --background: #f3f6fc;
+    --background: #ffffff;
     --foreground: #28364d;
     --card: #ffffff;
     --card-foreground: #28364d;
     --popover: #ffffff;
     --popover-foreground: #28364d;
 
-    /* Cobalt main actions, mint secondary actions and highlights. */
+    /* Cobalt main actions, sky-blue secondary actions and highlights. */
     --primary: #3159b7;
     --primary-foreground: #ffffff;
-    --secondary: #9fddc4;
-    --secondary-foreground: #234d3d;
+    --secondary: #b9ddfa;
+    --secondary-foreground: #163d63;
     --muted: #e6edfc;
-    --muted-foreground: #53625d;
-    --accent: #e3f5ec;
-    --accent-foreground: #234d3d;
+    --muted-foreground: #53627a;
+    --accent: #e8f3fd;
+    --accent-foreground: #163d63;
 
     /* Destructive actions remain red; borders and keyboard focus follow. */
     --destructive: #b42336;
@@ -32,21 +32,21 @@
 
     /* Chart series colours. */
     --chart-1: #3159b7;
-    --chart-2: #28795c;
+    --chart-2: #2879ac;
     --chart-3: #7656a6;
     --chart-4: #a96716;
     --chart-5: #b34f66;
     --radius: 0.5rem;
 
-    /* Navy navigation with mint selected and hovered items. */
+    /* Navy navigation with sky-blue selected and hovered items. */
     --sidebar-background: #243d78;
     --sidebar-foreground: #f3f6fc;
     --sidebar-primary: #3159b7;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #9fddc4;
-    --sidebar-accent-foreground: #234d3d;
+    --sidebar-accent: #b9ddfa;
+    --sidebar-accent-foreground: #163d63;
     --sidebar-border: #496297;
-    --sidebar-ring: #9fddc4;
+    --sidebar-ring: #b9ddfa;
     --sidebar: var(--sidebar-background);
 }
 
@@ -61,15 +61,15 @@
     --popover: #17243a;
     --popover-foreground: #e8eef9;
 
-    /* Cobalt main actions, mint secondary actions and highlights. */
+    /* Cobalt main actions, sky-blue secondary actions and highlights. */
     --primary: #8babff;
     --primary-foreground: #10203e;
-    --secondary: #9fddc4;
-    --secondary-foreground: #153b2e;
+    --secondary: #b9ddfa;
+    --secondary-foreground: #163d63;
     --muted: #20365b;
     --muted-foreground: #afbcd0;
-    --accent: #1d3e37;
-    --accent-foreground: #b6ecd4;
+    --accent: #1b3855;
+    --accent-foreground: #b9ddfa;
 
     /* Destructive actions remain red; borders and keyboard focus follow. */
     --destructive: #d63d50;
@@ -80,18 +80,18 @@
 
     /* Chart series colours. */
     --chart-1: #8babff;
-    --chart-2: #9fddc4;
+    --chart-2: #b9ddfa;
     --chart-3: #c5adf0;
     --chart-4: #f1cb80;
     --chart-5: #f2a1b2;
 
-    /* Navy navigation with mint selected and hovered items. */
+    /* Navy navigation with sky-blue selected and hovered items. */
     --sidebar-background: #14233d;
     --sidebar-foreground: #e8eef9;
     --sidebar-primary: #8babff;
     --sidebar-primary-foreground: #10203e;
-    --sidebar-accent: #1d3e37;
-    --sidebar-accent-foreground: #b6ecd4;
+    --sidebar-accent: #1b3855;
+    --sidebar-accent-foreground: #b9ddfa;
     --sidebar-border: #34445f;
     --sidebar-ring: #8babff;
     --sidebar: var(--sidebar-background);

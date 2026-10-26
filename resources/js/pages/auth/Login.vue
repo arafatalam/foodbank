@@ -24,12 +24,12 @@ defineOptions({
                 <div class="flex items-center justify-center gap-3">
                     <Sprout class="size-10 text-primary" aria-hidden="true" />
 
-                    <span class="text-3xl font-semibold">Laravel</span>
+                    <span class="text-3xl font-semibold">FoodBank</span>
                 </div>
 
                 <div class="flex flex-col gap-2 text-center">
                     <h1 class="text-2xl font-semibold">Welcome Back!</h1>
-                    <p>Login to your laravel account</p>
+                    <p>Login to your foodbank account</p>
                 </div>
 
                 <Form
