@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Users\GenerateUsername;
 use App\Actions\Users\GetAssignableRoles;
+use App\Http\Requests\Users\StoreUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Http\RedirectResponse;
 
 class UserController extends Controller
 {
@@ -31,9 +34,28 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): void
+    public function store(StoreUserRequest $request, GenerateUsername $generateUsername): RedirectResponse
     {
-        //
+        $data = $request->validated();
+
+        $data['username'] = $generateUsername->generate(
+            $data['first_name'],
+            $data['last_name']
+        );
+
+        $data['password'] = config('auth.initial_password');
+
+        $data['must_change_password'] = true;
+
+        $user = User::create($data);
+
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => 'User created successfully.',
+        ]);
+
+        return to_route('dashboard');
+
     }
 
     /**

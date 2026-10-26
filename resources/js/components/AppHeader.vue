@@ -48,6 +48,9 @@ const props = withDefaults(defineProps<Props>(), {
 
 const page = usePage();
 const auth = computed(() => page.props.auth);
+const fullName = computed(
+    () => `${auth.value.user.first_name} ${auth.value.user.last_name}`.trim(),
+);
 const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
 
 const activeItemStyles =
@@ -251,12 +254,12 @@ const rightNavItems: NavItem[] = [
                                     <AvatarImage
                                         v-if="auth.user.avatar"
                                         :src="auth.user.avatar"
-                                        :alt="auth.user.name"
+                                        :alt="fullName"
                                     />
                                     <AvatarFallback
                                         class="rounded-lg bg-neutral-200 font-semibold text-black dark:bg-neutral-700 dark:text-white"
                                     >
-                                        {{ getInitials(auth.user?.name) }}
+                                        {{ getInitials(fullName) }}
                                     </AvatarFallback>
                                 </Avatar>
                             </Button>
