@@ -13,7 +13,14 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
- * @property string $name
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $phone
+ * @property string $username
+ * @property int $role_id
+ * @property Role $role
+ * @property bool $is_active
+ * @property bool $must_change_password
  * @property string $email
  * @property Carbon|null $email_verified_at
  * @property string $password
@@ -28,10 +35,15 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'username',
         'email',
+        'phone',
+        'role_id',
+        'is_active',
         'password',
+        'must_change_password',
     ];
 
     /**

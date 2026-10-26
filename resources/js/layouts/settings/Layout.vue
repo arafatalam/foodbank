@@ -6,15 +6,10 @@ import { Separator } from '@/components/ui/separator';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { toUrl } from '@/lib/utils';
 import { edit as editAppearance } from '@/routes/appearance';
-import { edit as editProfile } from '@/routes/profile';
 import { edit as editSecurity } from '@/routes/security';
 import type { NavItem } from '@/types';
 
 const sidebarNavItems: NavItem[] = [
-    {
-        title: 'Profile',
-        href: editProfile(),
-    },
     {
         title: 'Security',
         href: editSecurity(),
@@ -32,7 +27,7 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
     <div class="px-4 py-6">
         <Heading
             title="Settings"
-            description="Manage your profile and account settings"
+            description="Manage your security and appearance settings"
         />
 
         <div class="flex flex-col lg:flex-row lg:space-x-12">
