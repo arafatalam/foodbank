@@ -4,6 +4,8 @@ use App\Models\User;
 
 return [
 
+    'initial_password' => env('INITIAL_PASSWORD'),
+
     /*
     |--------------------------------------------------------------------------
     | Authentication Defaults
