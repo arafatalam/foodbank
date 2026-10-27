@@ -56,6 +56,11 @@ class FortifyServiceProvider extends ServiceProvider
 
             return $user;
         });
+
+        // Confirm the signed-in user's password without querying a nonexistent login column.
+        Fortify::confirmPasswordsUsing(function (User $user, ?string $password): bool {
+            return is_string($password) && Hash::check($password, $user->password);
+        });
     }
 
     /**

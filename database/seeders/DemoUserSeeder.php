@@ -13,19 +13,13 @@ class DemoUserSeeder extends Seeder
 {
     public function run(): void
     {
-        // These sample accounts are only for local development.
-        if (! app()->environment('local')) {
-            $this->command?->warn('Demo users can only be seeded locally.');
-
-            return;
-        }
-
         // Save the whole batch together, or roll it back if anything fails.
         DB::transaction(function (): void {
             $this->call(RoleSeeder::class);
 
             $groups = [
                 RoleCode::MANAGER->value => [
+                    ['Amina', 'Rahman'],
                     ['Maya', 'Chen'],
                     ['Omar', 'Patel'],
                 ],

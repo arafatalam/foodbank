@@ -47,7 +47,14 @@ class UserController extends Controller
 
         $data['must_change_password'] = true;
 
+
+
         $user = User::create($data);
+
+        // Record that this administrator-created account is treated as verified.
+        $user->email_verified_at = now();
+        $user->save();
+
 
         Inertia::flash('toast', [
             'type' => 'success',

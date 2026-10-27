@@ -3,10 +3,12 @@
 use App\Http\Controllers\UserController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SetupPasswordController;
 
 Route::inertia('/', 'Welcome')->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+// Require sign-in; email verification is not required for now.
+Route::middleware(['auth'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
 
     Route::get('users/create', [UserController::class, 'create'])
@@ -16,6 +18,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('users', [UserController::class, 'store'])
         ->name('users.store')
         ->can('create', User::class);
+
+    // Send the setup page request to its controller.
+    Route::get('setup-password', [SetupPasswordController::class, 'show'])
+        ->name('password.setup.show');
+
+    // Send the password submission to the controller's store method.
+    Route::post('setup-password', [SetupPasswordController::class, 'store'])
+        ->name('password.setup.store');
+
 
 });
 

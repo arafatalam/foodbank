@@ -8,7 +8,8 @@ Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', '/settings/security');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+// Require sign-in; email verification is not required for now.
+Route::middleware(['auth'])->group(function () {
     Route::get('settings/security', [SecurityController::class, 'edit'])
         ->middleware(RequirePassword::class)
         ->name('security.edit');
