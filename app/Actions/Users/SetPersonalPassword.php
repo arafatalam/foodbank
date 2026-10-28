@@ -19,7 +19,6 @@ class SetPersonalPassword
             ]);
         }
 
-
         // Read the current initial password from application configuration.
         $initialPassword = config('auth.initial_password');
 
@@ -29,7 +28,6 @@ class SetPersonalPassword
                 'password' => 'Choose a password different from the current initial password.',
             ]);
         }
-
 
         $user->update([
             'password' => $password,

@@ -6,10 +6,10 @@ use App\Actions\Users\GenerateUsername;
 use App\Actions\Users\GetAssignableRoles;
 use App\Http\Requests\Users\StoreUserRequest;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Http\RedirectResponse;
 
 class UserController extends Controller
 {
@@ -47,30 +47,44 @@ class UserController extends Controller
 
         $data['must_change_password'] = true;
 
-
-
         $user = User::create($data);
 
         // Record that this administrator-created account is treated as verified.
         $user->email_verified_at = now();
         $user->save();
 
-
         Inertia::flash('toast', [
             'type' => 'success',
             'message' => 'User created successfully.',
         ]);
 
-        return to_route('dashboard');
+        // Open the details page for the account just created.
+        return to_route('users.show', $user);
 
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(User $user): void
+    public function show(User $user): Response
     {
-        //
+        // Collect the account fields this page needs.
+        $userDetails = $user->only([
+            'first_name',
+            'last_name',
+            'username',
+            'email',
+            'phone',
+        ]);
+
+        // Turn stored values into readable text for the details page.
+        $userDetails['role'] = $user->role->code->label();
+        $userDetails['status'] = $user->is_active ? 'Active' : 'Inactive';
+
+        // Send these details to the Vue page through Inertia.
+        return Inertia::render('users/Show', [
+            'user' => $userDetails,
+        ]);
     }
 
     /**

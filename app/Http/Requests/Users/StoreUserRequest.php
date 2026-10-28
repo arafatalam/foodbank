@@ -4,7 +4,6 @@ namespace App\Http\Requests\Users;
 
 use App\Actions\Users\GetAssignableRoles;
 use App\Models\User;
-use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;

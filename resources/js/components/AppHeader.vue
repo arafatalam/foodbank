@@ -48,8 +48,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const page = usePage();
 const auth = computed(() => page.props.auth);
-const fullName = computed(
-    () => `${auth.value.user.first_name} ${auth.value.user.last_name}`.trim(),
+const fullName = computed(() =>
+    `${auth.value.user.first_name} ${auth.value.user.last_name}`.trim(),
 );
 const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
 

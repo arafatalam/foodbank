@@ -1,9 +1,9 @@
 <?php
 
+use App\Http\Controllers\SetupPasswordController;
 use App\Http\Controllers\UserController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SetupPasswordController;
 
 Route::inertia('/', 'Welcome')->name('home');
 
@@ -19,6 +19,12 @@ Route::middleware(['auth'])->group(function () {
         ->name('users.store')
         ->can('create', User::class);
 
+    // This route handles numeric user IDs only.
+    Route::get('users/{user}', [UserController::class, 'show'])
+        ->whereNumber('user')
+        ->name('users.show')
+        ->can('view', 'user');
+
     // Send the setup page request to its controller.
     Route::get('setup-password', [SetupPasswordController::class, 'show'])
         ->name('password.setup.show');
@@ -26,7 +32,6 @@ Route::middleware(['auth'])->group(function () {
     // Send the password submission to the controller's store method.
     Route::post('setup-password', [SetupPasswordController::class, 'store'])
         ->name('password.setup.store');
-
 
 });
 

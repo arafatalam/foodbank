@@ -1,6 +1,12 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid, UserPlus } from '@lucide/vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import {
+    BookOpen,
+    CircleUserRound,
+    FolderGit2,
+    LayoutGrid,
+    UserPlus,
+} from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -15,8 +21,11 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { create } from '@/routes/users';
+import { create, show } from '@/routes/users';
 import type { NavItem } from '@/types';
+
+// Access the current Inertia page and its shared information.
+const page = usePage();
 
 const mainNavItems: NavItem[] = [
     {
@@ -24,10 +33,17 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
+    // Show create user form
     {
         title: 'Create user',
         href: create(),
         icon: UserPlus,
+    },
+    // Open the signed-in user's own details page.
+    {
+        title: 'My details',
+        href: show(page.props.auth.user.id),
+        icon: CircleUserRound,
     },
 ];
 
