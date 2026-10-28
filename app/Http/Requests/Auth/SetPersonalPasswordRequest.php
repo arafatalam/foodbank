@@ -4,6 +4,7 @@ namespace App\Http\Requests\Auth;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+
 class SetPersonalPasswordRequest extends FormRequest
 {
     /**
@@ -12,7 +13,7 @@ class SetPersonalPasswordRequest extends FormRequest
     public function authorize(): bool
     {
         // Allow submission only while this account needs password setup.
-        //return $this->user()?->must_change_password === true;
+        // return $this->user()?->must_change_password === true;
 
         // Get the signed-in account.
         $user = $this->user();

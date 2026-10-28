@@ -14,8 +14,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const { getInitials } = useInitials();
-const fullName = computed(
-    () => `${props.user.first_name} ${props.user.last_name}`.trim(),
+const fullName = computed(() =>
+    `${props.user.first_name} ${props.user.last_name}`.trim(),
 );
 
 // Compute whether we should show the avatar image

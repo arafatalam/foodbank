@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Enums\RoleCode;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class UserPolicy
 {
@@ -21,7 +20,23 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
-        return false;
+        // Allow users to view their own account details.
+        if ($user->id === $model->id) {
+            return true;
+        }
+
+        // Read the roles of the person viewing and the account being viewed.
+        $viewerRole = $user->role->code;
+        $targetRole = $model->role->code;
+
+        // Super Admins can view manager and volunteer accounts.
+        if ($viewerRole === RoleCode::SUPER_ADMIN) {
+            return in_array($targetRole, [RoleCode::MANAGER, RoleCode::VOLUNTEER], true);
+        }
+
+        // Managers can view volunteer accounts only.
+        return $viewerRole === RoleCode::MANAGER
+            && $targetRole === RoleCode::VOLUNTEER;
     }
 
     /**

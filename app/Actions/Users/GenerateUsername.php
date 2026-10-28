@@ -31,8 +31,6 @@ class GenerateUsername
         $firstName = str_replace([' ', '-', "'"], '', $firstName);
         $lastName = str_replace([' ', '-', "'"], '', $lastName);
 
-
-
         // Make sure the cleaned first name and last name contain at least one plain letter
         // "O'Connor" becomes "OConnor" and passes; "---" becomes empty and fails.
         if (! preg_match('/\A[a-z]+\z/i', $firstName)) {

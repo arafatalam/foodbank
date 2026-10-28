@@ -36,7 +36,6 @@ class EnsurePasswordSetupIsComplete
             return $next($request);
         }
 
-
         // If that user opens /dashboard, send them to setup instead.
         return to_route('password.setup.show');
     }

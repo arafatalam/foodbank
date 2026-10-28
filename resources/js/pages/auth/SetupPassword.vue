@@ -53,7 +53,6 @@ defineOptions({
                     v-slot="{ errors, processing }"
                     class="flex flex-col gap-6"
                 >
-
                     <!-- Stack the label above the new-password field. -->
                     <div class="flex flex-col gap-2">
                         <Label for="password">New password</Label>
@@ -67,7 +66,9 @@ defineOptions({
 
                     <!-- Ask for the password again to catch typing mistakes. -->
                     <div class="flex flex-col gap-2">
-                        <Label for="password_confirmation">Confirm new password</Label>
+                        <Label for="password_confirmation"
+                            >Confirm new password</Label
+                        >
                         <PasswordInput
                             id="password_confirmation"
                             name="password_confirmation"
