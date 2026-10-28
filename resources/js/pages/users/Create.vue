@@ -29,6 +29,33 @@ function submit() {
     form.post('/users');
 }
 
+function updatePhone(value: string | number) {
+    // Convert the incoming value to text.
+    const text = String(value);
+
+    // Remove our existing prefix before formatting again.
+    const localNumber = text.startsWith('+1') ? text.slice(2) : text;
+
+    // Remove non-digits, then keep the first ten digits.
+    const digits = localNumber.replace(/\D/g, '').slice(0, 10);
+
+    // Start with the first three digits.
+    let formatted = digits.slice(0, 3);
+
+    // Add the second group when more digits exist.
+    if (digits.length > 3) {
+        formatted += '-' + digits.slice(3, 6);
+    }
+
+    // Add the final group when more than six digits exist.
+    if (digits.length > 6) {
+        formatted += '-' + digits.slice(6);
+    }
+
+        // Add the country prefix, or leave an empty field.
+    form.phone = digits ? '+1 ' + formatted : '';
+}
+
 defineProps<{
     roles: {
         id: number;
@@ -90,7 +117,9 @@ defineProps<{
                             name="phone"
                             type="tel"
                             placeholder="+1 506-555-0123"
-                            v-model="form.phone"
+                            maxlength="15"
+                            :model-value="form.phone"
+                            @update:model-value="updatePhone"
                         />
                         <InputError :message="form.errors.phone" />
                     </div>
