@@ -5,10 +5,11 @@ use App\Http\Controllers\UserController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'Welcome')->name('home');
-
 // Require sign-in; email verification is not required for now.
 Route::middleware(['auth'])->group(function () {
+
+    Route::inertia('/', 'Dashboard')->name('home');
+
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
 
     // Open the user-list page.

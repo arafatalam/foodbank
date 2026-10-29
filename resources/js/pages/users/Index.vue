@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Link, router } from '@inertiajs/vue3';
-import { index } from '@/routes/users';
+import { edit, index } from '@/routes/users';
 import { onUnmounted, ref, watch } from 'vue';
 import { Button } from '@/components/ui/button';
 
@@ -133,6 +133,7 @@ onUnmounted(() => {
                                         variant="outline"
                                         size="sm"
                                         :disabled="!user.canEdit"
+                                        @click="router.get(edit.url(user.id))"
                                     >
                                         Edit
                                     </Button>
