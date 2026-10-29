@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
@@ -20,5 +21,14 @@ class Category extends Model
     {
         // Connect this category to its department using department_id.
         return $this->belongsTo(Department::class);
+    }
+
+    /**
+     * @return HasMany<Subcategory, $this>
+     */
+    public function subcategories(): HasMany
+    {
+        // Match subcategories using their saved category_id.
+        return $this->hasMany(Subcategory::class);
     }
 }
