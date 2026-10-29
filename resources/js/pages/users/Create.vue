@@ -52,7 +52,7 @@ function updatePhone(value: string | number) {
         formatted += '-' + digits.slice(6);
     }
 
-        // Add the country prefix, or leave an empty field.
+    // Add the country prefix, or leave an empty field.
     form.phone = digits ? '+1 ' + formatted : '';
 }
 
@@ -72,116 +72,124 @@ defineProps<{
             </CardHeader>
 
             <CardContent>
-                <form
-                    @submit.prevent="submit"
-                    class="grid grid-cols-1 gap-4 md:grid-cols-2"
+                <div
+                    class="mt-4 overflow-hidden rounded-xl border border-border"
                 >
-                    <div class="flex flex-col gap-2">
-                        <Label for="first_name">First name</Label>
-                        <Input
-                            id="first_name"
-                            name="first_name"
-                            type="text"
-                            v-model="form.first_name"
-                        />
-                        <!-- Show Laravel's first-name error when one exists. -->
-                        <InputError :message="form.errors.first_name" />
-                    </div>
-
-                    <div class="flex flex-col gap-2">
-                        <Label for="last_name">Last name</Label>
-                        <Input
-                            id="last_name"
-                            name="last_name"
-                            type="text"
-                            v-model="form.last_name"
-                        />
-                        <InputError :message="form.errors.last_name" />
-                    </div>
-
-                    <div class="flex flex-col gap-2">
-                        <Label for="email">Email</Label>
-                        <Input
-                            id="email"
-                            name="email"
-                            type="email"
-                            v-model="form.email"
-                        />
-                        <InputError :message="form.errors.email" />
-                    </div>
-
-                    <div class="flex flex-col gap-2">
-                        <Label for="phone">Phone</Label>
-                        <Input
-                            id="phone"
-                            name="phone"
-                            type="tel"
-                            placeholder="+1 506-555-0123"
-                            maxlength="15"
-                            :model-value="form.phone"
-                            @update:model-value="updatePhone"
-                        />
-                        <InputError :message="form.errors.phone" />
-                    </div>
-
-                    <div class="flex flex-col gap-2">
-                        <Label for="role">Role</Label>
-
-                        <Select v-model="form.role_id">
-                            <SelectTrigger id="role" class="w-full">
-                                <SelectValue placeholder="Select a role" />
-                            </SelectTrigger>
-
-                            <SelectContent>
-                                <SelectItem
-                                    v-for="option in roles"
-                                    :key="option.id"
-                                    :value="String(option.id)"
-                                >
-                                    {{ option.label }}
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <InputError :message="form.errors.role_id" />
-                    </div>
-
-                    <!-- Group the two choices under one accessible Status heading. -->
-                    <fieldset class="flex flex-col gap-2">
-                        <legend>Status</legend>
-
-                        <!-- Arrange the choices beside each other. -->
-                        <div class="flex gap-20">
-                            <label class="flex items-center gap-2">
-                                <!-- Selecting this option sets isActive to true. -->
-                                <input
-                                    type="radio"
-                                    name="status"
-                                    v-model="form.is_active"
-                                    :value="true"
-                                />
-                                Active
-                            </label>
-
-                            <label class="flex items-center gap-2">
-                                <!-- Selecting this option sets isActive to false. -->
-                                <input
-                                    type="radio"
-                                    name="status"
-                                    v-model="form.is_active"
-                                    :value="false"
-                                />
-                                Inactive
-                            </label>
+                    <form
+                        @submit.prevent="submit"
+                        class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2"
+                    >
+                        <div class="flex flex-col gap-2">
+                            <Label for="first_name">First name</Label>
+                            <Input
+                                id="first_name"
+                                name="first_name"
+                                type="text"
+                                v-model="form.first_name"
+                            />
+                            <!-- Show Laravel's first-name error when one exists. -->
+                            <InputError :message="form.errors.first_name" />
                         </div>
-                        <InputError :message="form.errors.is_active" />
-                    </fieldset>
 
-                    <div class="flex justify-end md:col-span-2">
-                        <Button type="submit" :disabled="form.processing">
-                            {{ form.processing ? 'Saving...' : 'Create user' }}
-                        </Button>
-                    </div>
-                </form>
+                        <div class="flex flex-col gap-2">
+                            <Label for="last_name">Last name</Label>
+                            <Input
+                                id="last_name"
+                                name="last_name"
+                                type="text"
+                                v-model="form.last_name"
+                            />
+                            <InputError :message="form.errors.last_name" />
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            <Label for="email">Email</Label>
+                            <Input
+                                id="email"
+                                name="email"
+                                type="email"
+                                v-model="form.email"
+                            />
+                            <InputError :message="form.errors.email" />
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            <Label for="phone">Phone</Label>
+                            <Input
+                                id="phone"
+                                name="phone"
+                                type="tel"
+                                placeholder="+1 506-555-0123"
+                                maxlength="15"
+                                :model-value="form.phone"
+                                @update:model-value="updatePhone"
+                            />
+                            <InputError :message="form.errors.phone" />
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            <Label for="role">Role</Label>
+
+                            <Select v-model="form.role_id">
+                                <SelectTrigger id="role" class="w-full">
+                                    <SelectValue placeholder="Select a role" />
+                                </SelectTrigger>
+
+                                <SelectContent>
+                                    <SelectItem
+                                        v-for="option in roles"
+                                        :key="option.id"
+                                        :value="String(option.id)"
+                                    >
+                                        {{ option.label }}
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <InputError :message="form.errors.role_id" />
+                        </div>
+
+                        <!-- Group the two choices under one accessible Status heading. -->
+                        <fieldset class="flex flex-col gap-2">
+                            <legend>Status</legend>
+
+                            <!-- Arrange the choices beside each other. -->
+                            <div class="flex gap-20">
+                                <label class="flex items-center gap-2">
+                                    <!-- Selecting this option sets isActive to true. -->
+                                    <input
+                                        type="radio"
+                                        name="status"
+                                        v-model="form.is_active"
+                                        :value="true"
+                                    />
+                                    Active
+                                </label>
+
+                                <label class="flex items-center gap-2">
+                                    <!-- Selecting this option sets isActive to false. -->
+                                    <input
+                                        type="radio"
+                                        name="status"
+                                        v-model="form.is_active"
+                                        :value="false"
+                                    />
+                                    Inactive
+                                </label>
+                            </div>
+                            <InputError :message="form.errors.is_active" />
+                        </fieldset>
+
+                        <div class="flex justify-end md:col-span-2">
+                            <Button type="submit" :disabled="form.processing">
+                                {{
+                                    form.processing
+                                        ? 'Saving...'
+                                        : 'Create user'
+                                }}
+                            </Button>
+                        </div>
+                    </form>
+                </div>
             </CardContent>
         </Card>
     </main>

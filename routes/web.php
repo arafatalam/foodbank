@@ -11,6 +11,11 @@ Route::inertia('/', 'Welcome')->name('home');
 Route::middleware(['auth'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
 
+    // Open the user-list page.
+    Route::get('users', [UserController::class, 'index'])
+        ->name('users.index')
+        ->can('viewAny', User::class);
+
     Route::get('users/create', [UserController::class, 'create'])
         ->name('users.create')
         ->can('create', User::class);

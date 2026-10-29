@@ -12,7 +12,7 @@ class UserPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -54,9 +54,22 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        $role = $user->role->code;
+        // Read the signed-in person's role and the target account's role.
+        $actorRole = $user->role->code;
+        $targetRole = $model->role->code;
 
-        return $role === RoleCode::SUPER_ADMIN || $role === RoleCode::MANAGER;
+        // Super Admin may edit manager and volunteer accounts.
+        if ($actorRole === RoleCode::SUPER_ADMIN) {
+            return in_array(
+                $targetRole,
+                [RoleCode::MANAGER, RoleCode::VOLUNTEER],
+                true
+            );
+        }
+
+        // A manager may edit volunteer accounts only.
+        return $actorRole === RoleCode::MANAGER
+            && $targetRole === RoleCode::VOLUNTEER;
     }
 
     /**

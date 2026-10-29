@@ -5,6 +5,7 @@ import {
     CircleUserRound,
     FolderGit2,
     LayoutGrid,
+    Users,
     UserPlus,
 } from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
@@ -21,7 +22,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { create, show } from '@/routes/users';
+import { create, index, show } from '@/routes/users';
 import type { NavItem } from '@/types';
 
 // Access the current Inertia page and its shared information.
@@ -32,6 +33,12 @@ const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+    },
+    // Open the user-list page.
+    {
+        title: 'Users',
+        href: index(),
+        icon: Users,
     },
     // Show create user form
     {
