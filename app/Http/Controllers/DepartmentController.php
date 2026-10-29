@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Departments\ListDepartments;
+use App\Http\Requests\Departments\IndexDepartmentsRequest;
 use App\Http\Requests\Departments\StoreDepartmentRequest;
 use App\Http\Requests\Departments\UpdateDepartmentRequest;
 use App\Models\Department;
@@ -14,9 +16,21 @@ class DepartmentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
+    public function index(
+        IndexDepartmentsRequest $request,
+        ListDepartments $action,
+    ): Response {
+        // Collect only the validated search filter.
+        $filters = $request->safe()->only(['search']);
+
+        // Ask the action for matching departments and page information.
+        $departments = $action->get($filters);
+
+        // Send the results and current search text to Vue.
+        return Inertia::render('departments/Index', [
+            'departments' => $departments,
+            'search' => $filters['search'] ?? '',
+        ]);
     }
 
     /**

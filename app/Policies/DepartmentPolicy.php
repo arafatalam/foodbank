@@ -13,7 +13,12 @@ class DepartmentPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        // Read the signed-in person's role.
+        $role = $user->role->code;
+
+        // Allow Managers and Super Admin to view the department list.
+        return $role === RoleCode::SUPER_ADMIN
+            || $role === RoleCode::MANAGER;
     }
 
     /**
@@ -42,7 +47,12 @@ class DepartmentPolicy
      */
     public function update(User $user, Department $department): bool
     {
-        return false;
+        // Read the signed-in person's role.
+        $role = $user->role->code;
+
+        // Allow Managers and Super Admin to rename departments.
+        return $role === RoleCode::SUPER_ADMIN
+            || $role === RoleCode::MANAGER;
     }
 
     /**

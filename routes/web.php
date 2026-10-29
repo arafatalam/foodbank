@@ -14,6 +14,13 @@ Route::middleware(['auth'])->group(function () {
 
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
 
+    // -------------------------- DEPARTMENT ROUTES --------------------------//
+
+    // Open the department list only when its policy allows access.
+    Route::get('departments', [DepartmentController::class, 'index'])
+        ->name('departments.index')
+        ->can('viewAny', Department::class);
+
     // Open the form only when the Department policy allows creation.
     Route::get('departments/create', [DepartmentController::class, 'create'])
         ->name('departments.create')
@@ -23,6 +30,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('departments', [DepartmentController::class, 'store'])
         ->name('departments.store')
         ->can('create', Department::class);
+
+    // -------------------------- USER ROUTES --------------------------//
 
     // All user-management URLs begin with /users.
     Route::prefix('users')->group(function () {
