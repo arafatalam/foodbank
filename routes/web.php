@@ -31,6 +31,18 @@ Route::middleware(['auth'])->group(function () {
         ->name('departments.store')
         ->can('create', Department::class);
 
+    // Check update permission before showing the saved department's form.
+    Route::get('departments/{department}/edit', [DepartmentController::class, 'edit'])
+        ->whereNumber('department')
+        ->name('departments.edit')
+        ->can('update', 'department');
+
+    // Apply the same permission check when saving a rename.
+    Route::patch('departments/{department}', [DepartmentController::class, 'update'])
+        ->whereNumber('department')
+        ->name('departments.update')
+        ->can('update', 'department');
+
     // -------------------------- USER ROUTES --------------------------//
 
     // All user-management URLs begin with /users.
