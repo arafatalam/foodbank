@@ -8,7 +8,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class ListUsers
 {
-    public function get(array $filters): LengthAwarePaginator
+    public function get(array $filters, User $actor): LengthAwarePaginator
     {
 
         // Give the filters to the method that builds the database query.
@@ -17,8 +17,10 @@ class ListUsers
         // Retrieve 10 users and keep the search in generated page links.
         $users = $query->paginate(10)->appends($filters);
 
-        // Prepare each user while keeping the pagination information.
-        return $users->through(fn (User $user) => $this->prepareUser($user));
+        // Give each row's preparation method the signed-in person.
+        return $users->through(
+            fn (User $user) => $this->prepareUser($user, $actor)
+        );
     }
 
     // Receive the filters needed to prepare the database query.
@@ -63,7 +65,8 @@ class ListUsers
             ->orderBy('id');
     }
 
-    private function prepareUser(User $user): array
+    // Receive both the listed account and the person viewing it.
+    private function prepareUser(User $user, User $actor): array
     {
         // Prepare the user's identity and contact fields.
         $userData = $user->only([
@@ -79,6 +82,9 @@ class ListUsers
 
         // Turn the stored true/false value into readable status text.
         $userData['status'] = $user->is_active ? 'Active' : 'Inactive';
+
+        // Ask the existing update policy whether this account may be edited.
+        $userData['canEdit'] = $actor->can('update', $user);
 
         // Return this user's prepared data.
         return $userData;

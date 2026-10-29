@@ -1,12 +1,20 @@
 <script setup lang="ts">
-// Use the same shared card pieces as the create page.
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardAction,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Link } from '@inertiajs/vue3';
 
 // Describe the account details Laravel sends to this page.
 defineProps<{
     user: {
+        id: number;
         first_name: string;
         last_name: string;
         username: string;
@@ -15,6 +23,7 @@ defineProps<{
         role: string;
         status: string;
     };
+    canEdit: boolean;
 }>();
 </script>
 
@@ -25,6 +34,14 @@ defineProps<{
         <Card class="w-full max-w-3xl">
             <CardHeader>
                 <CardTitle>User Details</CardTitle>
+
+                <!-- Show this action only when Laravel permits editing. -->
+                <CardAction v-if="canEdit">
+                    <!-- Apply button styling to the navigation link. -->
+                    <Button as-child>
+                        <Link :href="`/users/${user.id}/edit`"> Edit </Link>
+                    </Button>
+                </CardAction>
             </CardHeader>
 
             <CardContent>

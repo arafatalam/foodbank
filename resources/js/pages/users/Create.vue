@@ -149,35 +149,41 @@ defineProps<{
                         </div>
 
                         <!-- Group the two choices under one accessible Status heading. -->
-                        <fieldset class="flex flex-col gap-2">
-                            <legend>Status</legend>
+                        <div class="flex flex-col gap-2">
+                            <Label id="status-label">Status</Label>
 
                             <!-- Arrange the choices beside each other. -->
-                            <div class="flex gap-20">
+                            <div
+                                class="flex gap-20"
+                                role="group"
+                                aria-labelledby="status-label"
+                            >
                                 <label class="flex items-center gap-2">
-                                    <!-- Selecting this option sets isActive to true. -->
+                                    <!-- Checked means active; unchecking selects inactive. -->
                                     <input
-                                        type="radio"
-                                        name="status"
+                                        type="checkbox"
+                                        name="active"
                                         v-model="form.is_active"
-                                        :value="true"
+                                        :true-value="true"
+                                        :false-value="false"
                                     />
                                     Active
                                 </label>
 
                                 <label class="flex items-center gap-2">
-                                    <!-- Selecting this option sets isActive to false. -->
+                                    <!-- Share the same value so only one box stays checked. -->
                                     <input
-                                        type="radio"
-                                        name="status"
+                                        type="checkbox"
+                                        name="inactive"
                                         v-model="form.is_active"
-                                        :value="false"
+                                        :true-value="false"
+                                        :false-value="true"
                                     />
                                     Inactive
                                 </label>
                             </div>
                             <InputError :message="form.errors.is_active" />
-                        </fieldset>
+                        </div>
 
                         <div class="flex justify-end md:col-span-2">
                             <Button type="submit" :disabled="form.processing">

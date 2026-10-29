@@ -12,7 +12,7 @@ class GetAssignableRoles
     /**
      * @return Collection<int, array{id: int, label: string}>
      */
-    public function get(User $actor): Collection
+    public function get(User $actor, bool $forEdit = false): Collection
     {
         $actorRole = $actor->role->code;
         $allowedCodes = match ($actorRole) {
@@ -20,9 +20,10 @@ class GetAssignableRoles
                 RoleCode::MANAGER->value,
                 RoleCode::VOLUNTEER->value,
             ],
-            RoleCode::MANAGER => [
-                RoleCode::VOLUNTEER->value,
-            ],
+            // Edit offers promotion; Create keeps its volunteer-only choices.
+            RoleCode::MANAGER => $forEdit
+                ? [RoleCode::MANAGER->value, RoleCode::VOLUNTEER->value]
+                : [RoleCode::VOLUNTEER->value],
             default => [],
         };
 

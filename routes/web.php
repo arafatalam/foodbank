@@ -30,6 +30,18 @@ Route::middleware(['auth'])->group(function () {
         ->name('users.show')
         ->can('view', 'user');
 
+    // Open the edit page only when this person may update this account.
+    Route::get('users/{user}/edit', [UserController::class, 'edit'])
+        ->whereNumber('user')
+        ->name('users.edit')
+        ->can('update', 'user');
+
+    // Save changes only when this person may update the selected account.
+    Route::patch('users/{user}', [UserController::class, 'update'])
+        ->whereNumber('user')
+        ->name('users.update')
+        ->can('update', 'user');
+
     // Send the setup page request to its controller.
     Route::get('setup-password', [SetupPasswordController::class, 'show'])
         ->name('password.setup.show');

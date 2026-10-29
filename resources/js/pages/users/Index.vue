@@ -20,6 +20,7 @@ const props = defineProps<{
             phone: string;
             role: string;
             status: string;
+            canEdit: boolean;
         }[];
         // URLs for moving between pages.
         prev_page_url: string | null;
@@ -104,13 +105,14 @@ onUnmounted(() => {
                                 <th scope="col" class="px-4 py-3">Phone</th>
                                 <th scope="col" class="px-4 py-3">Role</th>
                                 <th scope="col" class="px-4 py-3">Status</th>
+                                <th scope="col" class="px-4 py-3">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <!-- Show this row only when the returned user list is empty. -->
                             <tr v-if="users.data.length === 0">
                                 <!-- Span all six columns so the message uses the table's width. -->
-                                <td colspan="6" class="px-4 py-3">
+                                <td colspan="7" class="px-4 py-3">
                                     No users found.
                                 </td>
                             </tr>
@@ -124,6 +126,17 @@ onUnmounted(() => {
                                 <td class="px-4 py-3">{{ user.phone }}</td>
                                 <td class="px-4 py-3">{{ user.role }}</td>
                                 <td class="px-4 py-3">{{ user.status }}</td>
+                                <td class="px-4 py-3">
+                                    <!-- Disable editing when Laravel says permission is denied. -->
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        :disabled="!user.canEdit"
+                                    >
+                                        Edit
+                                    </Button>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
