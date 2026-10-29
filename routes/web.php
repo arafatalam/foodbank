@@ -47,6 +47,11 @@ Route::middleware(['auth'])->group(function () {
 
     // -------------------------- CATEGORY ROUTES --------------------------//
 
+    // Check list permission before loading categories or searching them.
+    Route::get('categories', [CategoryController::class, 'index'])
+        ->name('categories.index')
+        ->can('viewAny', Category::class);
+
     // Open the category form only when its policy allows creation.
     Route::get('categories/create', [CategoryController::class, 'create'])
         ->name('categories.create')
@@ -56,6 +61,18 @@ Route::middleware(['auth'])->group(function () {
     Route::post('categories', [CategoryController::class, 'store'])
         ->name('categories.store')
         ->can('create', Category::class);
+
+    // Check update permission before opening the category's edit form.
+    Route::get('categories/{category}/edit', [CategoryController::class, 'edit'])
+        ->whereNumber('category')
+        ->name('categories.edit')
+        ->can('update', 'category');
+
+    // Check the same permission again before saving its new name.
+    Route::patch('categories/{category}', [CategoryController::class, 'update'])
+        ->whereNumber('category')
+        ->name('categories.update')
+        ->can('update', 'category');
 
     // -------------------------- USER ROUTES --------------------------//
 

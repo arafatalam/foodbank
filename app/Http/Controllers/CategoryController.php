@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Categories\ListCategories;
+use App\Http\Requests\Categories\IndexCategoriesRequest;
 use App\Http\Requests\Categories\StoreCategoryRequest;
 use App\Http\Requests\Categories\UpdateCategoryRequest;
 use App\Models\Category;
@@ -15,9 +17,19 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(IndexCategoriesRequest $request, ListCategories $action): Response
     {
-        //
+        // Collect only the validated search filter.
+        $filters = $request->safe()->only(['search']);
+
+        // Load matching categories together with their departments.
+        $categories = $action->get($filters);
+
+        // Send the current page and search text to Vue.
+        return Inertia::render('categories/Index', [
+            'categories' => $categories,
+            'search' => $filters['search'] ?? '',
+        ]);
     }
 
     /**
@@ -65,17 +77,38 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Category $category)
+    public function edit(Category $category): Response
     {
-        //
+        // Load the saved category and all department choices for the edit form.
+        $category->load('department:id,name');
+        $categoryDetails = [
+            ...$category->only(['id', 'name']),
+            'department' => $category->department->only(['id', 'name']),
+        ];
+
+        // Keep the dropdown choices alphabetical, just like category creation.
+        $departments = Department::query()->orderBy('name')->get(['id', 'name']);
+
+        return Inertia::render('categories/Edit', [
+            'category' => $categoryDetails,
+            'departments' => $departments,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse
     {
-        //
+        // Save the validated name and selected department on the same category.
+        $category->update($request->validated());
+
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => 'Category updated successfully.',
+        ]);
+
+        return to_route('categories.index');
     }
 
     /**
