@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Actions\Users\GenerateUsername;
 use App\Actions\Users\GetAssignableRoles;
+use App\Actions\Users\ListUsers;
+use App\Http\Requests\Users\IndexUsersRequest;
 use App\Http\Requests\Users\StoreUserRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -16,9 +18,19 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): void
+    public function index(IndexUsersRequest $request, ListUsers $action): Response
     {
-        //
+        // Collect only the validated search value.
+        $filters = $request->safe()->only(['search']);
+
+        // Pass the validated filters to the user-list action.
+        $users = $action->get($filters);
+
+        // Send the paginated users to the directory page.
+        return Inertia::render('users/Index', [
+            'users' => $users,
+            'search' => $filters['search'] ?? '',
+        ]);
     }
 
     /**
