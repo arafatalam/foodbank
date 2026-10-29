@@ -22,7 +22,7 @@ class SubcategoryController extends Controller
     {
         // Pass only the validated search text to the listing action.
         $filters = $request->safe()->only(['search']);
-        $subcategories = $action->get($filters);
+        $subcategories = $action->get($filters, $request->user());
 
         return Inertia::render('subcategories/Index', [
             'subcategories' => $subcategories,
@@ -73,17 +73,43 @@ class SubcategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Subcategory $subcategory)
+    public function edit(Subcategory $subcategory): Response
     {
-        //
+        // Load the current path so both dropdowns start with the saved selections.
+        $subcategory->load('category.department');
+        $subcategoryDetails = [
+            ...$subcategory->only(['id', 'name']),
+            'category' => [
+                ...$subcategory->category->only(['id', 'name']),
+                'department' => $subcategory->category->department->only(['id', 'name']),
+            ],
+        ];
+
+        // Match the choices provided by the creation form.
+        $departments = Department::query()->orderBy('name')->get(['id', 'name']);
+        $categories = Category::query()->orderBy('name')->orderBy('id')->get(['id', 'name', 'department_id']);
+
+        return Inertia::render('subcategories/Edit', [
+            'subcategory' => $subcategoryDetails,
+            'departments' => $departments,
+            'categories' => $categories,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateSubcategoryRequest $request, Subcategory $subcategory)
+    public function update(UpdateSubcategoryRequest $request, Subcategory $subcategory): RedirectResponse
     {
-        //
+        // Department is checked for consistency; save the direct category link and name.
+        $subcategory->update($request->safe()->only(['category_id', 'name']));
+
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => 'Subcategory updated successfully.',
+        ]);
+
+        return to_route('subcategories.index');
     }
 
     /**
