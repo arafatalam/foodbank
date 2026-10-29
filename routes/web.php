@@ -90,6 +90,17 @@ Route::middleware(['auth'])->group(function () {
         ->name('subcategories.store')
         ->can('create', Subcategory::class);
 
+    // Check rename permission before displaying or saving the edit form.
+    Route::get('subcategories/{subcategory}/edit', [SubcategoryController::class, 'edit'])
+        ->whereNumber('subcategory')
+        ->name('subcategories.edit')
+        ->can('update', 'subcategory');
+
+    Route::patch('subcategories/{subcategory}', [SubcategoryController::class, 'update'])
+        ->whereNumber('subcategory')
+        ->name('subcategories.update')
+        ->can('update', 'subcategory');
+
     // -------------------------- USER ROUTES --------------------------//
 
     // All user-management URLs begin with /users.

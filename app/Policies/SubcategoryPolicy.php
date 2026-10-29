@@ -45,7 +45,11 @@ class SubcategoryPolicy
      */
     public function update(User $user, Subcategory $subcategory): bool
     {
-        return false;
+        // Use this permission for both edit requests and each list row's button.
+        $role = $user->role->code;
+
+        return $role === RoleCode::SUPER_ADMIN
+            || $role === RoleCode::MANAGER;
     }
 
     /**

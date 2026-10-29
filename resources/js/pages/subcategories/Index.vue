@@ -16,6 +16,7 @@ const props = defineProps<{
         data: {
             id: number;
             name: string;
+            canEdit: boolean;
             category: {
                 id: number;
                 name: string;
@@ -108,12 +109,13 @@ onUnmounted(() => {
                                 <th scope="col" class="px-4 py-3">
                                     Subcategory name
                                 </th>
+                                <th scope="col" class="px-4 py-3">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Use all three columns for the empty-list message. -->
+                            <!-- Use all four columns for the empty-list message. -->
                             <tr v-if="subcategories.data.length === 0">
-                                <td colspan="3" class="px-4 py-3">
+                                <td colspan="4" class="px-4 py-3">
                                     No subcategories found.
                                 </td>
                             </tr>
@@ -131,6 +133,22 @@ onUnmounted(() => {
                                 </td>
                                 <td class="px-4 py-3">
                                     {{ subcategory.name }}
+                                </td>
+                                <td class="px-4 py-3">
+                                    <!-- Laravel supplies the permission; the route checks it again. -->
+                                    <Button
+                                        v-if="subcategory.canEdit"
+                                        variant="outline"
+                                        size="sm"
+                                        as-child
+                                    >
+                                        <Link
+                                            :href="`/subcategories/${subcategory.id}/edit`"
+                                            :aria-label="`Edit ${subcategory.name}`"
+                                        >
+                                            Edit
+                                        </Link>
+                                    </Button>
                                 </td>
                             </tr>
                         </tbody>
