@@ -3,9 +3,11 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\SetupPasswordController;
+use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\UserController;
 use App\Models\Category;
 use App\Models\Department;
+use App\Models\Subcategory;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -73,6 +75,15 @@ Route::middleware(['auth'])->group(function () {
         ->whereNumber('category')
         ->name('categories.update')
         ->can('update', 'category');
+
+    // Check creation permission before loading choices or saving a Subcategory.
+    Route::get('subcategories/create', [SubcategoryController::class, 'create'])
+        ->name('subcategories.create')
+        ->can('create', Subcategory::class);
+
+    Route::post('subcategories', [SubcategoryController::class, 'store'])
+        ->name('subcategories.store')
+        ->can('create', Subcategory::class);
 
     // -------------------------- USER ROUTES --------------------------//
 
