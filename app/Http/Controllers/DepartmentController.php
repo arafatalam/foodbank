@@ -70,17 +70,31 @@ class DepartmentController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Department $department)
+    public function edit(Department $department): Response
     {
-        //
+        // Send only the saved fields needed by the edit form.
+        $departmentDetails = $department->only(['id', 'name']);
+
+        return Inertia::render('departments/Edit', [
+            'department' => $departmentDetails,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateDepartmentRequest $request, Department $department)
+    public function update(UpdateDepartmentRequest $request, Department $department): RedirectResponse
     {
-        //
+        // Rename the existing record without changing its ID or links.
+        $department->update($request->validated());
+
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => 'Department updated successfully.',
+        ]);
+
+        // Follow Edit User's return-to-list behaviour after saving.
+        return to_route('departments.index');
     }
 
     /**
