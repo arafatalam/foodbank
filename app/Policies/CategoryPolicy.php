@@ -13,7 +13,11 @@ class CategoryPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        // Apply the same list permission as Departments.
+        $role = $user->role->code;
+
+        return $role === RoleCode::SUPER_ADMIN
+            || $role === RoleCode::MANAGER;
     }
 
     /**
@@ -42,7 +46,11 @@ class CategoryPolicy
      */
     public function update(User $user, Category $category): bool
     {
-        return false;
+        // Use the same catalogue-management roles for opening and saving edits.
+        $role = $user->role->code;
+
+        return $role === RoleCode::SUPER_ADMIN
+            || $role === RoleCode::MANAGER;
     }
 
     /**
