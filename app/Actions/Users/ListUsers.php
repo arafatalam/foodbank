@@ -8,6 +8,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class ListUsers
 {
+    /**
+     * @param  array{search?: string|null}  $filters
+     * @return LengthAwarePaginator<int, array<string, int|string|bool>>
+     */
     public function get(array $filters, User $actor): LengthAwarePaginator
     {
 
@@ -24,6 +28,10 @@ class ListUsers
     }
 
     // Receive the filters needed to prepare the database query.
+    /**
+     * @param  array{search?: string|null}  $filters
+     * @return Builder<User>
+     */
     private function buildQuery(array $filters): Builder
     {
         // Use the search text, or empty text when no search was supplied.
@@ -66,6 +74,9 @@ class ListUsers
     }
 
     // Receive both the listed account and the person viewing it.
+    /**
+     * @return array<string, int|string|bool>
+     */
     private function prepareUser(User $user, User $actor): array
     {
         // Prepare the user's identity and contact fields.
