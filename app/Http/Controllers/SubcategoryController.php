@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Subcategories\ListSubcategories;
+use App\Http\Requests\Subcategories\IndexSubcategoriesRequest;
 use App\Http\Requests\Subcategories\StoreSubcategoryRequest;
 use App\Http\Requests\Subcategories\UpdateSubcategoryRequest;
 use App\Models\Category;
@@ -16,9 +18,16 @@ class SubcategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(IndexSubcategoriesRequest $request, ListSubcategories $action): Response
     {
-        //
+        // Pass only the validated search text to the listing action.
+        $filters = $request->safe()->only(['search']);
+        $subcategories = $action->get($filters);
+
+        return Inertia::render('subcategories/Index', [
+            'subcategories' => $subcategories,
+            'search' => $filters['search'] ?? '',
+        ]);
     }
 
     /**

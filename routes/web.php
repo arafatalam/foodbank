@@ -76,6 +76,11 @@ Route::middleware(['auth'])->group(function () {
         ->name('categories.update')
         ->can('update', 'category');
 
+    // Check list permission before loading or searching Subcategory records.
+    Route::get('subcategories', [SubcategoryController::class, 'index'])
+        ->name('subcategories.index')
+        ->can('viewAny', Subcategory::class);
+
     // Check creation permission before loading choices or saving a Subcategory.
     Route::get('subcategories/create', [SubcategoryController::class, 'create'])
         ->name('subcategories.create')

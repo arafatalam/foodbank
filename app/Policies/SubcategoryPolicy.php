@@ -13,7 +13,11 @@ class SubcategoryPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        // Use the same catalogue list permission as Departments and Categories.
+        $role = $user->role->code;
+
+        return $role === RoleCode::SUPER_ADMIN
+            || $role === RoleCode::MANAGER;
     }
 
     /**
