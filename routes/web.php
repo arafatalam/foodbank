@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\SetupPasswordController;
 use App\Http\Controllers\UserController;
+use App\Models\Category;
 use App\Models\Department;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
@@ -42,6 +44,18 @@ Route::middleware(['auth'])->group(function () {
         ->whereNumber('department')
         ->name('departments.update')
         ->can('update', 'department');
+
+    // -------------------------- CATEGORY ROUTES --------------------------//
+
+    // Open the category form only when its policy allows creation.
+    Route::get('categories/create', [CategoryController::class, 'create'])
+        ->name('categories.create')
+        ->can('create', Category::class);
+
+    // Check creation permission again when the form is submitted.
+    Route::post('categories', [CategoryController::class, 'store'])
+        ->name('categories.store')
+        ->can('create', Category::class);
 
     // -------------------------- USER ROUTES --------------------------//
 
