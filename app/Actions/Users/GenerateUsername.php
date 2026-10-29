@@ -8,8 +8,12 @@ use Illuminate\Validation\ValidationException;
 
 class GenerateUsername
 {
-    public function generate(string $firstName, string $lastName): string
-    {
+    // When editing, optionally receive the account to exclude from duplicate checks.
+    public function generate(
+        string $firstName,
+        string $lastName,
+        ?User $ignoreUser = null
+    ): string {
 
         // Reject unexpected characters like @ before changing both names.
         if (! preg_match("/\A[\p{L}\p{M} '’-]+\z/u", $firstName)) {
@@ -50,13 +54,21 @@ class GenerateUsername
         $username = $base;
         $suffix = 1;
 
-        // Keep trying while another user already has this username.
-        while (User::query()->where('username', $username)->exists()) {
-
-            // Add a numbered ending: 1 becomes "01", producing "amina.rahman.01".
+        // Keep trying while another account already has this username.
+        while (
+            User::query()
+                ->where('username', $username)
+                ->when(
+                    $ignoreUser !== null,
+                    // Leave the account being edited out of the duplicate check.
+                    fn ($query) => $query->where('id', '!=', $ignoreUser->id)
+                )
+                ->exists()
+        ) {
+            // Try the next numbered username.
             $username = $base.'.'.str_pad((string) $suffix, 2, '0', STR_PAD_LEFT);
 
-            // Prepare the next number in case this username is also taken.
+            // Prepare the next number if that username is also taken.
             $suffix++;
         }
 
