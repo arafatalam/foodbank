@@ -136,6 +136,10 @@ Route::middleware(['auth'])->group(function () {
 
     // -------------------------- PRODUCT ROUTES --------------------------//
 
+    Route::get('products', [ProductController::class, 'index'])
+        ->name('products.index')
+        ->can('viewAny', Product::class);
+
     // Check creation permission before displaying the page.
     Route::get('products/create', [ProductController::class, 'create'])
         ->name('products.create')

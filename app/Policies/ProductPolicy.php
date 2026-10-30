@@ -13,7 +13,7 @@ class ProductPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return in_array($user->role->code, [RoleCode::SUPER_ADMIN, RoleCode::MANAGER, RoleCode::VOLUNTEER], true);
     }
 
     /**
