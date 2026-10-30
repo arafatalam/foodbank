@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Subcategory;
 use App\Models\Tag;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
@@ -22,38 +23,14 @@ class CreateProduct
 
         // Save the product and all tag links together, or roll back both.
         return DB::transaction(function () use ($data) {
-            // Keep the chosen path consistent until the product has been saved.
-            $category = Category::query()->whereKey($data['category_id'])
-                ->where('department_id', $data['department_id'])->sharedLock()->first();
-            if ($category === null) {
-                throw ValidationException::withMessages(['category_id' => 'Select a category in the chosen department.']);
-            }
-
-            // Serialize saves in this Subcategory before checking for duplicates.
-            $subcategory = Subcategory::query()->whereKey($data['subcategory_id'])
-                ->where('category_id', $category->id)->lockForUpdate()->first();
-            if ($subcategory === null) {
-                throw ValidationException::withMessages(['subcategory_id' => 'Select a subcategory in the chosen category.']);
-            }
+            $category = $this->findAndLockCategory($data['category_id'], $data['department_id']);
+            $subcategory = $this->findAndLockSubcategory($data['subcategory_id'], $category);
 
             $name = trim($data['name']);
             $brand = trim($data['brand'] ?? '');
 
-            // Include inactive products and treat a blank brand as unbranded.
-            $duplicate = Product::query()->where('subcategory_id', $subcategory->id)
-                ->whereRaw('LOWER(TRIM(name)) = ?', [mb_strtolower($name)])
-                ->whereRaw("LOWER(TRIM(COALESCE(brand, ''))) = ?", [mb_strtolower($brand)])
-                ->exists();
-            if ($duplicate) {
-                throw ValidationException::withMessages(['name' => 'A product with this name and brand already exists in the selected subcategory.']);
-            }
-
-            // Recheck and hold the selected tags in case they changed after validation.
-            $tagIds = $data['tag_ids'] ?? [];
-            $tags = Tag::query()->whereKey($tagIds)->orderBy('id')->sharedLock()->get(['id']);
-            if ($tags->count() !== count($tagIds)) {
-                throw ValidationException::withMessages(['tag_ids' => 'One or more selected tags are no longer available.']);
-            }
+            $this->ensureProductIsUnique($subcategory, $name, $brand);
+            $tags = $this->findAndLockTags($data['tag_ids'] ?? []);
 
             // Department/Category are derived through Subcategory, not stored twice.
             $product = Product::create([
@@ -66,5 +43,60 @@ class CreateProduct
 
             return $product;
         });
+    }
+
+    private function findAndLockCategory(int|string $categoryId, int|string $departmentId): Category
+    {
+        // Keep the category in the chosen department until saving finishes.
+        $category = Category::query()->whereKey($categoryId)
+            ->where('department_id', $departmentId)->sharedLock()->first();
+
+        if ($category === null) {
+            throw ValidationException::withMessages(['category_id' => 'Select a category in the chosen department.']);
+        }
+
+        return $category;
+    }
+
+    private function findAndLockSubcategory(int|string $subcategoryId, Category $category): Subcategory
+    {
+        // Make saves in this subcategory wait their turn before checking duplicates.
+        $subcategory = Subcategory::query()->whereKey($subcategoryId)
+            ->where('category_id', $category->id)->lockForUpdate()->first();
+
+        if ($subcategory === null) {
+            throw ValidationException::withMessages(['subcategory_id' => 'Select a subcategory in the chosen category.']);
+        }
+
+        return $subcategory;
+    }
+
+    private function ensureProductIsUnique(Subcategory $subcategory, string $name, string $brand): void
+    {
+        // Include inactive products and treat a blank brand as unbranded.
+        $duplicate = Product::query()->where('subcategory_id', $subcategory->id)
+            ->whereRaw('LOWER(TRIM(name)) = ?', [mb_strtolower($name)])
+            ->whereRaw("LOWER(TRIM(COALESCE(brand, ''))) = ?", [mb_strtolower($brand)])
+            ->exists();
+
+        if ($duplicate) {
+            throw ValidationException::withMessages(['name' => 'A product with this name and brand already exists in the selected subcategory.']);
+        }
+    }
+
+    /**
+     * @param  list<int|string>  $tagIds
+     * @return Collection<int, Tag>
+     */
+    private function findAndLockTags(array $tagIds): Collection
+    {
+        // Recheck and hold the selected tags in case they changed after validation.
+        $tags = Tag::query()->whereKey($tagIds)->orderBy('id')->sharedLock()->get(['id']);
+
+        if ($tags->count() !== count($tagIds)) {
+            throw ValidationException::withMessages(['tag_ids' => 'One or more selected tags are no longer available.']);
+        }
+
+        return $tags;
     }
 }
