@@ -4,10 +4,12 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\SetupPasswordController;
 use App\Http\Controllers\SubcategoryController;
+use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use App\Models\Category;
 use App\Models\Department;
 use App\Models\Subcategory;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -46,6 +48,35 @@ Route::middleware(['auth'])->group(function () {
         ->whereNumber('department')
         ->name('departments.update')
         ->can('update', 'department');
+
+    // -------------------------- TAG ROUTES --------------------------//
+
+    // Open the tag list only when its policy allows access.
+    Route::get('tags', [TagController::class, 'index'])
+        ->name('tags.index')
+        ->can('viewAny', Tag::class);
+
+    // Open the form only when the Tag policy allows creation.
+    Route::get('tags/create', [TagController::class, 'create'])
+        ->name('tags.create')
+        ->can('create', Tag::class);
+
+    // Save a tag only when the policy allows creation.
+    Route::post('tags', [TagController::class, 'store'])
+        ->name('tags.store')
+        ->can('create', Tag::class);
+
+    // Check update permission before showing the saved tag's form.
+    Route::get('tags/{tag}/edit', [TagController::class, 'edit'])
+        ->whereNumber('tag')
+        ->name('tags.edit')
+        ->can('update', 'tag');
+
+    // Apply the same permission check when saving a rename.
+    Route::patch('tags/{tag}', [TagController::class, 'update'])
+        ->whereNumber('tag')
+        ->name('tags.update')
+        ->can('update', 'tag');
 
     // -------------------------- CATEGORY ROUTES --------------------------//
 
