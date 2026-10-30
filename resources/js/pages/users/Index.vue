@@ -60,6 +60,13 @@ watch(search, () => {
 onUnmounted(() => {
     window.clearTimeout(searchTimer);
 });
+
+// Tell the shared layout where this page belongs.
+defineOptions({
+    layout: {
+        breadcrumbs: [{ title: 'Users', href: '/users' }],
+    },
+});
 </script>
 
 <template>

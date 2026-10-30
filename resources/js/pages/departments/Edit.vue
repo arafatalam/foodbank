@@ -20,6 +20,16 @@ function submit() {
     // Update this existing department through its protected PATCH route.
     form.patch(`/departments/${props.department.id}`);
 }
+
+// Tell the shared layout where this page belongs.
+defineOptions({
+    layout: {
+        breadcrumbs: [
+            { title: 'Departments', href: '/departments' },
+            { title: 'Edit department', href: '#' },
+        ],
+    },
+});
 </script>
 
 <template>

@@ -62,6 +62,16 @@ defineProps<{
         label: string;
     }[];
 }>();
+
+// Tell the shared layout where this page belongs.
+defineOptions({
+    layout: {
+        breadcrumbs: [
+            { title: 'Users', href: '/users' },
+            { title: 'Create user', href: '#' },
+        ],
+    },
+});
 </script>
 
 <template>

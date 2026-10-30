@@ -30,6 +30,16 @@ function submit() {
         onSuccess: () => form.reset(),
     });
 }
+
+// Tell the shared layout where this page belongs.
+defineOptions({
+    layout: {
+        breadcrumbs: [
+            { title: 'Categories', href: '/categories' },
+            { title: 'Create category', href: '#' },
+        ],
+    },
+});
 </script>
 
 <template>

@@ -117,6 +117,16 @@ function resetForm() {
     searchTags();
     resetKey.value++;
 }
+
+// Tell the shared layout where this page belongs.
+defineOptions({
+    layout: {
+        breadcrumbs: [
+            { title: 'Products', href: '/products' },
+            { title: 'Create product', href: '#' },
+        ],
+    },
+});
 </script>
 
 <template>

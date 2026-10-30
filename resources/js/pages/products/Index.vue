@@ -184,6 +184,13 @@ onUnmounted(() => {
     window.clearTimeout(searchTimer);
     window.clearTimeout(tagSearchTimer);
 });
+
+// Tell the shared layout where this page belongs.
+defineOptions({
+    layout: {
+        breadcrumbs: [{ title: 'Products', href: '/products' }],
+    },
+});
 </script>
 
 <template>

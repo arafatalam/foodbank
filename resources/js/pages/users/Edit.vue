@@ -97,6 +97,16 @@ function updatePhone(value: string | number) {
     // Add the Canadian prefix, or leave an empty field.
     form.phone = digits ? '+1 ' + formatted : '';
 }
+
+// Tell the shared layout where this page belongs.
+defineOptions({
+    layout: {
+        breadcrumbs: [
+            { title: 'Users', href: '/users' },
+            { title: 'Edit user', href: '#' },
+        ],
+    },
+});
 </script>
 
 <template>
