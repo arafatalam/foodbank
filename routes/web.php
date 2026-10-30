@@ -80,6 +80,12 @@ Route::middleware(['auth'])->group(function () {
         ->name('tags.update')
         ->can('update', 'tag');
 
+    // Check deletion permission before the action checks whether the tag is used.
+    Route::delete('tags/{tag}', [TagController::class, 'destroy'])
+        ->whereNumber('tag')
+        ->name('tags.destroy')
+        ->can('delete', 'tag');
+
     // -------------------------- CATEGORY ROUTES --------------------------//
 
     // Check list permission before loading categories or searching them.

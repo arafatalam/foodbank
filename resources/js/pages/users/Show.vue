@@ -9,7 +9,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Link } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 
 // Describe the account details Laravel sends to this page.
 defineProps<{
@@ -28,6 +28,8 @@ defineProps<{
 </script>
 
 <template>
+    <!-- Supply the page name for the browser tab. -->
+    <Head title="User Details" />
     <!-- Padding around the whole page. -->
     <main class="p-4">
         <!-- Fill narrow screens, but limit the card width on wider screens. -->

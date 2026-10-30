@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Tags\DeleteTag;
 use App\Actions\Tags\ListTags;
 use App\Http\Requests\Tags\IndexTagsRequest;
 use App\Http\Requests\Tags\StoreTagRequest;
 use App\Http\Requests\Tags\UpdateTagRequest;
 use App\Models\Tag;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -57,6 +59,20 @@ class TagController extends Controller
         ]);
 
         // Return to the creation form.
+        return back();
+    }
+
+    public function destroy(Request $request, Tag $tag, DeleteTag $action): RedirectResponse
+    {
+        // The action rejects used tags before deleting anything.
+        $action->delete($tag, $request->user());
+
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => 'Tag deleted successfully.',
+        ]);
+
+        // Keep the current list/search page after deleting its row.
         return back();
     }
 
