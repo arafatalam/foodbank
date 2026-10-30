@@ -150,6 +150,18 @@ Route::middleware(['auth'])->group(function () {
         ->name('products.store')
         ->can('create', Product::class);
 
+    // Check edit permission for the selected product before opening its form.
+    Route::get('products/{product}/edit', [ProductController::class, 'edit'])
+        ->whereNumber('product')
+        ->name('products.edit')
+        ->can('update', 'product');
+
+    // Check the same product permission before accepting saved changes.
+    Route::patch('products/{product}', [ProductController::class, 'update'])
+        ->whereNumber('product')
+        ->name('products.update')
+        ->can('update', 'product');
+
     // -------------------------- USER ROUTES --------------------------//
 
     // All user-management URLs begin with /users.
