@@ -12,7 +12,7 @@ import {
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useForm } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 
 // Starting values for a new account.
@@ -65,6 +65,8 @@ defineProps<{
 </script>
 
 <template>
+    <!-- Supply the page name for the browser tab. -->
+    <Head title="Create User" />
     <main class="p-4">
         <Card class="w-full max-w-3xl">
             <CardHeader>

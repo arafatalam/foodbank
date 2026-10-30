@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -100,6 +100,8 @@ function updatePhone(value: string | number) {
 </script>
 
 <template>
+    <!-- Supply the page name for the browser tab. -->
+    <Head title="Edit User" />
     <!-- Match the Show page's surrounding space and card width. -->
     <main class="p-4">
         <Card class="w-full max-w-3xl">

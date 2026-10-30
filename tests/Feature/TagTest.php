@@ -1,11 +1,16 @@
 <?php
 
+use App\Actions\Tags\DeleteTag;
 use App\Enums\RoleCode;
+use App\Models\Department;
+use App\Models\Product;
 use App\Models\Role;
 use App\Models\Tag;
 use App\Models\User;
 use App\Policies\TagPolicy;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 use Inertia\Testing\AssertableInertia as Assert;
 
 function tagManager(RoleCode $role = RoleCode::MANAGER): User
@@ -103,20 +108,85 @@ test('volunteers and guests cannot access tag pages or write tags', function (bo
         $response = $this->get(route($route, $route === 'tags.edit' ? $tag : []));
         $signedIn ? $response->assertForbidden() : $response->assertRedirect(route('login'));
     }
-    foreach ([$this->post(route('tags.store'), ['name' => 'New']), $this->patch(route('tags.update', $tag), ['name' => 'Changed'])] as $response) {
+    foreach ([$this->post(route('tags.store'), ['name' => 'New']), $this->patch(route('tags.update', $tag), ['name' => 'Changed']), $this->delete(route('tags.destroy', $tag))] as $response) {
         $signedIn ? $response->assertForbidden() : $response->assertRedirect(route('login'));
     }
     expect($tag->fresh()->name)->toBe('Original');
     $this->assertDatabaseCount('tags', 1);
 })->with([true, false]);
 
-test('missing tags return not found and deletion is not exposed', function () {
+test('missing tags return not found for editing and deletion', function () {
     $tag = Tag::create(['name' => 'Original']);
     $this->actingAs(tagManager());
     $this->get(route('tags.edit', 999999))->assertNotFound();
     $this->patch(route('tags.update', 999999), ['name' => 'Changed'])->assertNotFound();
-    $this->delete('/tags/'.$tag->id)->assertMethodNotAllowed();
+    $this->delete(route('tags.destroy', 999999))->assertNotFound();
+    $this->delete('/tags/not-a-number')->assertNotFound();
     $this->assertDatabaseCount('tags', 1);
+});
+
+test('catalogue managers can delete unused shared tags', function (RoleCode $role) {
+    $tag = Tag::create(['name' => 'Unused']);
+    $other = Tag::create(['name' => 'Keep']);
+    $this->actingAs(tagManager($role))->get(route('tags.index'))
+        ->assertInertia(fn (Assert $page) => $page->where('tags.data.1.canDelete', true));
+
+    // Delete only this tag and return to the existing search results.
+    $this->from(route('tags.index', ['search' => 'Unused']))
+        ->delete(route('tags.destroy', $tag))
+        ->assertRedirect(route('tags.index', ['search' => 'Unused']))
+        ->assertSessionHasNoErrors();
+
+    $this->assertDatabaseMissing('tags', ['id' => $tag->id]);
+    $this->assertDatabaseHas('tags', ['id' => $other->id]);
+})->with([RoleCode::MANAGER, RoleCode::SUPER_ADMIN]);
+
+test('active and inactive product usage blocks shared tag deletion', function (RoleCode $role, bool $active) {
+    $subcategory = Department::create(['name' => 'Pantry'])->categories()
+        ->create(['name' => 'Grains'])->subcategories()->create(['name' => 'Rice']);
+    $product = Product::create(['name' => 'Rice', 'subcategory_id' => $subcategory->id, 'is_active' => $active]);
+    $tag = Tag::create(['name' => 'Shared']);
+    $product->tags()->attach($tag);
+
+    $this->actingAs(tagManager($role))->from(route('tags.index'))
+        ->delete(route('tags.destroy', $tag))
+        ->assertRedirect(route('tags.index'))->assertSessionHasErrors('tag');
+
+    // A blocked deletion must preserve both the tag and its product link.
+    $this->assertDatabaseHas('tags', ['id' => $tag->id]);
+    $this->assertDatabaseHas('product_tag', ['product_id' => $product->id, 'tag_id' => $tag->id]);
+    expect($product->refresh()->is_active)->toBe($active);
+})->with([RoleCode::MANAGER, RoleCode::SUPER_ADMIN])->with([true, false]);
+
+test('the deletion action waits until the last product stops using a tag', function () {
+    $actor = tagManager();
+    $tag = Tag::create(['name' => 'Shared']);
+    $subcategory = Department::create(['name' => 'Pantry'])->categories()
+        ->create(['name' => 'Grains'])->subcategories()->create(['name' => 'Rice']);
+    $active = Product::create(['name' => 'One', 'subcategory_id' => $subcategory->id, 'is_active' => true]);
+    $inactive = Product::create(['name' => 'Two', 'subcategory_id' => $subcategory->id, 'is_active' => false]);
+    $active->tags()->attach($tag);
+    $inactive->tags()->attach($tag);
+
+    // Removing the active product's link is insufficient while the inactive one remains.
+    expect(fn () => app(DeleteTag::class)->delete($tag, $actor))
+        ->toThrow(ValidationException::class);
+    $active->tags()->detach($tag);
+    expect(fn () => app(DeleteTag::class)->delete($tag, $actor))
+        ->toThrow(ValidationException::class);
+
+    // Once unused, delete the tag while keeping both product records.
+    $inactive->tags()->detach($tag);
+    app(DeleteTag::class)->delete($tag, $actor);
+    $this->assertDatabaseMissing('tags', ['id' => $tag->id]);
+    $this->assertDatabaseCount('products', 2);
+});
+
+test('the deletion action independently rejects volunteers', function () {
+    $tag = Tag::create(['name' => 'Unused']);
+    expect(fn () => app(DeleteTag::class)->delete($tag, tagManager(RoleCode::VOLUNTEER)))
+        ->toThrow(AuthorizationException::class);
+    $this->assertDatabaseHas('tags', ['id' => $tag->id]);
 });
 
 test('edit buttons and both edit routes respect policy denial independently of list access', function () {

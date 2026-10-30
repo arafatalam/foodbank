@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Link, router } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { edit, index } from '@/routes/users';
 import { onUnmounted, ref, watch } from 'vue';
 import { Button } from '@/components/ui/button';
@@ -63,6 +63,8 @@ onUnmounted(() => {
 </script>
 
 <template>
+    <!-- Supply the page name for the browser tab. -->
+    <Head title="Users" />
     <!-- Add space around the card. -->
     <main class="p-4">
         <!-- Fill available width without exceeding our usual card width. -->

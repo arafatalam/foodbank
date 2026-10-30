@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,6 +16,7 @@ const props = defineProps<{
             id: number;
             name: string;
             canEdit: boolean;
+            canDelete: boolean;
         }[];
         prev_page_url: string | null;
         next_page_url: string | null;
@@ -25,6 +27,31 @@ const props = defineProps<{
 
 // Start the editable input with the search text supplied by Laravel.
 const search = ref(props.search);
+
+// Keep deletion errors and its waiting state separate from the search input.
+const deletion = useForm({});
+const deletingId = ref<number | null>(null);
+
+function deleteTag(tag: { id: number; name: string }) {
+    if (deletion.processing) return;
+
+    // Confirm which shared tag will be permanently removed.
+    if (
+        !window.confirm(
+            `Delete the shared tag "${tag.name}"? This cannot be undone.`,
+        )
+    )
+        return;
+
+    deletion.clearErrors();
+    deletingId.value = tag.id;
+    deletion.delete(`/tags/${tag.id}`, {
+        preserveScroll: true,
+        onFinish: () => {
+            deletingId.value = null;
+        },
+    });
+}
 
 // Remember the waiting timer so we can cancel it.
 let searchTimer: number | undefined;
@@ -68,6 +95,18 @@ onUnmounted(() => {
             </CardHeader>
 
             <CardContent>
+                <!-- Explain a blocked deletion without removing the tag's row. -->
+                <div
+                    v-if="Object.keys(deletion.errors).length"
+                    role="alert"
+                    class="mt-4"
+                >
+                    <InputError
+                        v-for="(message, field) in deletion.errors"
+                        :key="field"
+                        :message="message"
+                    />
+                </div>
                 <!-- Stack the label above the search input. -->
                 <form
                     @submit.prevent="searchTags"
@@ -106,20 +145,40 @@ onUnmounted(() => {
                             <tr v-for="tag in tags.data" :key="tag.id">
                                 <td class="px-4 py-3">{{ tag.name }}</td>
                                 <td class="px-4 py-3">
-                                    <!-- Open this tag's edit address. -->
-                                    <Button
-                                        v-if="tag.canEdit"
-                                        variant="outline"
-                                        size="sm"
-                                        as-child
+                                    <div
+                                        class="flex flex-wrap items-center gap-2"
                                     >
-                                        <Link
-                                            :href="`/tags/${tag.id}/edit`"
-                                            :aria-label="`Edit ${tag.name}`"
+                                        <!-- Open this tag's edit address. -->
+                                        <Button
+                                            v-if="tag.canEdit"
+                                            variant="outline"
+                                            size="sm"
+                                            as-child
                                         >
-                                            Edit
-                                        </Link>
-                                    </Button>
+                                            <Link
+                                                :href="`/tags/${tag.id}/edit`"
+                                                :aria-label="`Edit ${tag.name}`"
+                                            >
+                                                Edit
+                                            </Link>
+                                        </Button>
+                                        <!-- The parent keeps actions spaced and lets them wrap. -->
+                                        <Button
+                                            v-if="tag.canDelete"
+                                            type="button"
+                                            variant="destructive"
+                                            size="sm"
+                                            :disabled="deletion.processing"
+                                            :aria-label="`Delete ${tag.name}`"
+                                            @click="deleteTag(tag)"
+                                            >{{
+                                                deletion.processing &&
+                                                deletingId === tag.id
+                                                    ? 'Deleting...'
+                                                    : 'Delete'
+                                            }}</Button
+                                        >
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>

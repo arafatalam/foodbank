@@ -11,7 +11,7 @@ class ListTags
 {
     /**
      * @param  array{search?: string|null}  $filters
-     * @return LengthAwarePaginator<int, array{id: int, name: string, canEdit: bool}>
+     * @return LengthAwarePaginator<int, array{id: int, name: string, canEdit: bool, canDelete: bool}>
      */
     public function get(array $filters, User $actor): LengthAwarePaginator
     {
@@ -31,6 +31,7 @@ class ListTags
             'id' => $tag->id,
             'name' => $tag->name,
             'canEdit' => $actor->can('update', $tag),
+            'canDelete' => $actor->can('delete', $tag),
         ]);
     }
 }

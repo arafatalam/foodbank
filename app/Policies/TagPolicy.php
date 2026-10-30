@@ -60,7 +60,11 @@ class TagPolicy
      */
     public function delete(User $user, Tag $tag): bool
     {
-        return false;
+        // Managers and Super Admin may request deletion; the action checks usage.
+        $role = $user->role->code;
+
+        return $role === RoleCode::SUPER_ADMIN
+            || $role === RoleCode::MANAGER;
     }
 
     /**

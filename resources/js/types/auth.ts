@@ -12,4 +12,13 @@ export type User = {
 
 export type Auth = {
     user: User;
+    navigation: {
+        users: boolean;
+        createUser: boolean;
+        products: boolean;
+        departments: boolean;
+        categories: boolean;
+        subcategories: boolean;
+        tags: boolean;
+    };
 };
