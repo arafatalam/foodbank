@@ -6,9 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { onUnmounted, ref, watch } from 'vue';
 
-// Shared Inertia data should not be copied onto HTML elements.
-defineOptions({ inheritAttrs: false });
-
 // Receive the tag records and page information from Laravel.
 const props = defineProps<{
     search: string;

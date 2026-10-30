@@ -14,9 +14,6 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 
-// Shared page data should not be copied onto HTML elements.
-defineOptions({ inheritAttrs: false });
-
 const props = defineProps<{
     departments: { id: number; name: string }[];
     categories: { id: number; name: string; department_id: number }[];

@@ -11,7 +11,7 @@ class ListSubcategories
 {
     /**
      * @param  array{search?: string|null}  $filters
-     * @return LengthAwarePaginator<int, array<string, mixed>>
+     * @return LengthAwarePaginator<int, array{id: int, name: string, category: array{id: int, name: string, department: array{id: int, name: string}}, canEdit: bool}>
      */
     public function get(array $filters, User $actor): LengthAwarePaginator
     {
@@ -39,10 +39,15 @@ class ListSubcategories
 
         // Follow ListUsers: prepare each row with its actual update permission.
         return $subcategories->through(fn (Subcategory $subcategory) => [
-            ...$subcategory->only(['id', 'name']),
+            'id' => $subcategory->id,
+            'name' => $subcategory->name,
             'category' => [
-                ...$subcategory->category->only(['id', 'name']),
-                'department' => $subcategory->category->department->only(['id', 'name']),
+                'id' => $subcategory->category->id,
+                'name' => $subcategory->category->name,
+                'department' => [
+                    'id' => $subcategory->category->department->id,
+                    'name' => $subcategory->category->department->name,
+                ],
             ],
             'canEdit' => $actor->can('update', $subcategory),
         ]);

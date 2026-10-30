@@ -6,9 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-// Shared Inertia data should not be copied onto HTML elements.
-defineOptions({ inheritAttrs: false });
-
 // Receive the saved tag from the controller.
 const props = defineProps<{
     tag: { id: number; name: string };
