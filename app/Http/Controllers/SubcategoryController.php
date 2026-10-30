@@ -65,7 +65,7 @@ class SubcategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Subcategory $subcategory)
+    public function show(Subcategory $subcategory): void
     {
         //
     }
@@ -115,7 +115,7 @@ class SubcategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Subcategory $subcategory)
+    public function destroy(Subcategory $subcategory): void
     {
         //
     }

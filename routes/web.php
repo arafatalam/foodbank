@@ -2,12 +2,14 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SetupPasswordController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use App\Models\Category;
 use App\Models\Department;
+use App\Models\Product;
 use App\Models\Subcategory;
 use App\Models\Tag;
 use App\Models\User;
@@ -131,6 +133,18 @@ Route::middleware(['auth'])->group(function () {
         ->whereNumber('subcategory')
         ->name('subcategories.update')
         ->can('update', 'subcategory');
+
+    // -------------------------- PRODUCT ROUTES --------------------------//
+
+    // Check creation permission before displaying the page.
+    Route::get('products/create', [ProductController::class, 'create'])
+        ->name('products.create')
+        ->can('create', Product::class);
+
+    // Apply the same permission before accepting a product save.
+    Route::post('products', [ProductController::class, 'store'])
+        ->name('products.store')
+        ->can('create', Product::class);
 
     // -------------------------- USER ROUTES --------------------------//
 

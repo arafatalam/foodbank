@@ -14,9 +14,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-// Do not copy shared page data onto HTML elements.
-defineOptions({ inheritAttrs: false });
-
 // Receive the saved subcategory from the controller.
 const props = defineProps<{
     departments: { id: number; name: string }[];

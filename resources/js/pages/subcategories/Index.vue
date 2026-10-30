@@ -6,9 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { onUnmounted, ref, watch } from 'vue';
 
-// Shared page props should not become HTML attributes.
-defineOptions({ inheritAttrs: false });
-
 // Receive the subcategory records and page information from Laravel.
 const props = defineProps<{
     search: string;
