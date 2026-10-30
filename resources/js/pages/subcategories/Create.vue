@@ -42,6 +42,16 @@ function submit() {
     // Keep the current values on errors; clear the form only after success.
     form.post('/subcategories', { onSuccess: () => form.reset() });
 }
+
+// Tell the shared layout where this page belongs.
+defineOptions({
+    layout: {
+        breadcrumbs: [
+            { title: 'Subcategories', href: '/subcategories' },
+            { title: 'Create subcategory', href: '#' },
+        ],
+    },
+});
 </script>
 
 <template>

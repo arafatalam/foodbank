@@ -20,6 +20,16 @@ function submit() {
     // Update this existing tag through its protected PATCH route.
     form.patch(`/tags/${props.tag.id}`);
 }
+
+// Tell the shared layout where this page belongs.
+defineOptions({
+    layout: {
+        breadcrumbs: [
+            { title: 'Tags', href: '/tags' },
+            { title: 'Edit tag', href: '#' },
+        ],
+    },
+});
 </script>
 
 <template>

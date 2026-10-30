@@ -48,6 +48,16 @@ function submit() {
     // Update this existing category through its protected PATCH route.
     form.patch(`/categories/${props.category.id}`);
 }
+
+// Tell the shared layout where this page belongs.
+defineOptions({
+    layout: {
+        breadcrumbs: [
+            { title: 'Categories', href: '/categories' },
+            { title: 'Edit category', href: '#' },
+        ],
+    },
+});
 </script>
 
 <template>

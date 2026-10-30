@@ -54,6 +54,13 @@ watch(search, () => {
 onUnmounted(() => {
     window.clearTimeout(searchTimer);
 });
+
+// Tell the shared layout where this page belongs.
+defineOptions({
+    layout: {
+        breadcrumbs: [{ title: 'Departments', href: '/departments' }],
+    },
+});
 </script>
 
 <template>

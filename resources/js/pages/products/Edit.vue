@@ -118,6 +118,16 @@ function submit() {
     // Inertia keeps the entered values when Laravel returns validation errors.
     form.patch(`/products/${props.product.id}`, { preserveScroll: true });
 }
+
+// Tell the shared layout where this page belongs.
+defineOptions({
+    layout: {
+        breadcrumbs: [
+            { title: 'Products', href: '/products' },
+            { title: 'Edit product', href: '#' },
+        ],
+    },
+});
 </script>
 
 <template>

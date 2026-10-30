@@ -78,6 +78,16 @@ function submit() {
 
     form.patch(`/subcategories/${props.subcategory.id}`);
 }
+
+// Tell the shared layout where this page belongs.
+defineOptions({
+    layout: {
+        breadcrumbs: [
+            { title: 'Subcategories', href: '/subcategories' },
+            { title: 'Edit subcategory', href: '#' },
+        ],
+    },
+});
 </script>
 
 <template>

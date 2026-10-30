@@ -17,6 +17,16 @@ function submit() {
         onSuccess: () => form.reset(),
     });
 }
+
+// Tell the shared layout where this page belongs.
+defineOptions({
+    layout: {
+        breadcrumbs: [
+            { title: 'Departments', href: '/departments' },
+            { title: 'Create department', href: '#' },
+        ],
+    },
+});
 </script>
 
 <template>

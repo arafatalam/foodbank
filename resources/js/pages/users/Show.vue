@@ -25,6 +25,16 @@ defineProps<{
     };
     canEdit: boolean;
 }>();
+
+// Tell the shared layout where this page belongs.
+defineOptions({
+    layout: {
+        breadcrumbs: [
+            { title: 'Users', href: '/users' },
+            { title: 'User details', href: '#' },
+        ],
+    },
+});
 </script>
 
 <template>

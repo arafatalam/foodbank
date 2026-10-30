@@ -17,6 +17,16 @@ function submit() {
         onSuccess: () => form.reset(),
     });
 }
+
+// Tell the shared layout where this page belongs.
+defineOptions({
+    layout: {
+        breadcrumbs: [
+            { title: 'Tags', href: '/tags' },
+            { title: 'Create tag', href: '#' },
+        ],
+    },
+});
 </script>
 
 <template>
