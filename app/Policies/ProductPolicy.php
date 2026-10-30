@@ -42,7 +42,12 @@ class ProductPolicy
      */
     public function update(User $user, Product $product): bool
     {
-        return false;
+        // Read the signed-in user's role.
+        $role = $user->role->code;
+
+        // Allow Managers and the Super Admin to edit products.
+        return $role === RoleCode::SUPER_ADMIN
+            || $role === RoleCode::MANAGER;
     }
 
     /**

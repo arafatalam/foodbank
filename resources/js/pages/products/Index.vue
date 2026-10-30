@@ -41,6 +41,7 @@ const props = defineProps<{
             brand: string | null;
             tags: Choice[];
             is_active: boolean;
+            canUpdate: boolean;
         }[];
         current_page: number;
         last_page: number;
@@ -68,6 +69,11 @@ function filterValues(): Filters {
     };
 }
 const filters = reactive(filterValues());
+
+// Hide the Actions column when none of the displayed products can be edited.
+const showEditActions = computed(() =>
+    props.products.data.some((product) => product.canUpdate),
+);
 
 // Keep browser Back/Forward and pagination in step with the server's selections.
 watch(
@@ -444,11 +450,21 @@ onUnmounted(() => {
                                 <th scope="col" class="px-4 py-3">Brand</th>
                                 <th scope="col" class="px-4 py-3">Tags</th>
                                 <th scope="col" class="px-4 py-3">Status</th>
+                                <th
+                                    v-if="showEditActions"
+                                    scope="col"
+                                    class="px-4 py-3"
+                                >
+                                    Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-if="products.data.length === 0">
-                                <td colspan="4" class="px-4 py-3">
+                                <td
+                                    :colspan="showEditActions ? 5 : 4"
+                                    class="px-4 py-3"
+                                >
                                     No products found.
                                 </td>
                             </tr>
@@ -475,6 +491,20 @@ onUnmounted(() => {
                                             ? 'Active'
                                             : 'Inactive'
                                     }}
+                                </td>
+                                <td v-if="showEditActions" class="px-4 py-3">
+                                    <!-- Link to this row's saved product; the route checks permission again. -->
+                                    <Button
+                                        v-if="product.canUpdate"
+                                        variant="outline"
+                                        as-child
+                                    >
+                                        <Link
+                                            :href="`/products/${product.id}/edit`"
+                                            :aria-label="`Edit ${product.name}`"
+                                            >Edit</Link
+                                        >
+                                    </Button>
                                 </td>
                             </tr>
                         </tbody>

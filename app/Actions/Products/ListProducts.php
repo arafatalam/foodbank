@@ -3,6 +3,7 @@
 namespace App\Actions\Products;
 
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -10,9 +11,9 @@ class ListProducts
 {
     /**
      * @param  array{search?: string|null, department_id?: int|string|null, category_id?: int|string|null, subcategory_id?: int|string|null, tag_ids?: list<int|string>|null, status?: string|null}  $filters
-     * @return LengthAwarePaginator<int, array{id: int, name: string, brand: string|null, is_active: bool, tags: list<array{id: int, name: string}>}>
+     * @return LengthAwarePaginator<int, array{id: int, name: string, brand: string|null, is_active: bool, canUpdate: bool, tags: list<array{id: int, name: string}>}>
      */
-    public function get(array $filters): LengthAwarePaginator
+    public function get(array $filters, User $actor): LengthAwarePaginator
     {
         $search = $filters['search'] ?? '';
 
@@ -46,6 +47,8 @@ class ListProducts
             'name' => $product->name,
             'brand' => $product->brand,
             'is_active' => $product->is_active,
+            // Let the policy decide whether this person may edit this product.
+            'canUpdate' => $actor->can('update', $product),
             'tags' => array_values($product->tags->map(fn ($tag) => ['id' => $tag->id, 'name' => $tag->name])->all()),
         ]);
     }
