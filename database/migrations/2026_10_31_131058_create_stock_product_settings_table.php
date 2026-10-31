@@ -1,0 +1,29 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('stock_product_settings', function (Blueprint $table) {
+            $table->id();
+
+            // Stock Management owns one measurement setting per catalogue Product.
+            $table->foreignId('product_id')->unique()
+                ->constrained()
+                ->restrictOnDelete();
+
+            // Empty until stock setup chooses kg, litre or item from its first package.
+            $table->string('summary_unit', 10)->nullable();
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('stock_product_settings');
+    }
+};

@@ -51,7 +51,7 @@ class PackageSizePolicy
      */
     public function delete(User $user, PackageSize $packageSize): bool
     {
-        return false;
+        return $this->create($user) && ! $packageSize->isReferenced();
     }
 
     /**

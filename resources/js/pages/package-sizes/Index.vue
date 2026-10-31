@@ -5,6 +5,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import { packageTypes, contentsUnits } from '@/lib/package-sizes';
 
 const props = defineProps<{
@@ -17,6 +25,7 @@ const props = defineProps<{
             contents: string;
             contents_unit: string;
             canUpdate: boolean;
+            canDelete: boolean;
         }[];
         prev_page_url: string | null;
         next_page_url: string | null;
@@ -26,6 +35,39 @@ const props = defineProps<{
 }>();
 
 const search = ref(props.search);
+const deleting = ref<{ id: number; label: string } | null>(null);
+const deletingNow = ref(false);
+const deleteError = ref('');
+
+function confirmDelete(definition: {
+    id: number;
+    package_type: string;
+    contents: string;
+    contents_unit: string;
+}) {
+    deleteError.value = '';
+    deleting.value = {
+        id: definition.id,
+        label: `${definition.package_type.replaceAll('_', ' ')} ${definition.contents} ${definition.contents_unit}`,
+    };
+}
+
+function deletePackageSize() {
+    if (!deleting.value || deletingNow.value) return;
+    deletingNow.value = true;
+    router.delete(`/package-sizes/${deleting.value.id}`, {
+        preserveScroll: true,
+        onSuccess: () => {
+            deleting.value = null;
+        },
+        onError: (errors) => {
+            deleteError.value = Object.values(errors).join(' ');
+        },
+        onFinish: () => {
+            deletingNow.value = false;
+        },
+    });
+}
 let searchTimer: number | undefined;
 
 function searchPackageSizes() {
@@ -137,7 +179,10 @@ defineOptions({
                                     }}
                                 </td>
                                 <td class="px-4 py-3">
-                                    <div class="flex items-center gap-2">
+                                    <!-- Reserve the same first column for Edit or the read-only message. -->
+                                    <div
+                                        class="grid grid-cols-[9rem_auto] items-center justify-items-start gap-2"
+                                    >
                                         <Button
                                             v-if="definition.canUpdate"
                                             variant="outline"
@@ -153,15 +198,19 @@ defineOptions({
                                         <!-- Used definitions are also protected by server-side authorization. -->
                                         <span
                                             v-else
-                                            class="text-sm text-muted-foreground"
+                                            class="text-sm whitespace-nowrap text-muted-foreground"
                                             >In use · Read only</span
                                         >
-                                        <!-- Keep deletion unavailable until stock-item dependencies and safeguards exist. -->
+                                        <!-- The server rechecks references before deleting an unused definition. -->
                                         <Button
                                             type="button"
                                             variant="destructive"
                                             size="sm"
-                                            disabled
+                                            :disabled="
+                                                !definition.canDelete ||
+                                                deletingNow
+                                            "
+                                            @click="confirmDelete(definition)"
                                         >
                                             Delete
                                         </Button>
@@ -193,5 +242,43 @@ defineOptions({
                 </div>
             </CardContent>
         </Card>
+        <Dialog
+            :open="!!deleting"
+            @update:open="
+                (open) => {
+                    if (!open && !deletingNow) deleting = null;
+                }
+            "
+        >
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Delete unused package size?</DialogTitle>
+                    <DialogDescription
+                        >{{ deleting?.label }} will be permanently deleted.
+                        Referenced definitions cannot be
+                        deleted.</DialogDescription
+                    >
+                </DialogHeader>
+                <p v-if="deleteError" role="alert" class="text-destructive">
+                    {{ deleteError }}
+                </p>
+                <DialogFooter>
+                    <Button
+                        variant="outline"
+                        :disabled="deletingNow"
+                        @click="deleting = null"
+                        >Cancel</Button
+                    >
+                    <Button
+                        variant="destructive"
+                        :disabled="deletingNow"
+                        @click="deletePackageSize"
+                        >{{
+                            deletingNow ? 'Deleting…' : 'Delete package size'
+                        }}</Button
+                    >
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     </main>
 </template>

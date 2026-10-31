@@ -58,7 +58,6 @@ function submit() {
                 <Select
                     v-model="form.package_type"
                     name="package_type"
-                    required
                 >
                     <SelectTrigger
                         id="package_type"
@@ -94,7 +93,6 @@ function submit() {
                     :min="form.contents_unit === 'item' ? 1 : 0.001"
                     max="999999999.999"
                     :step="form.contents_unit === 'item' ? 1 : 0.001"
-                    required
                     :aria-invalid="!!form.errors.contents"
                     aria-describedby="contents-error"
                 />
@@ -109,7 +107,6 @@ function submit() {
                 <Select
                     v-model="form.contents_unit"
                     name="contents_unit"
-                    required
                 >
                     <SelectTrigger
                         id="contents_unit"

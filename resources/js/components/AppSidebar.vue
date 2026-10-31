@@ -112,18 +112,25 @@ const accountItems = computed<NavItem[]>(() => [
 ]);
 
 // Package definitions belong to Stock Management, separate from the catalogue.
-const stockItems = computed<NavItem[]>(() =>
-    page.props.auth.navigation.packageSizes
-        ? [
-              {
-                  title: 'Package sizes',
-                  href: '/package-sizes',
-                  icon: Package,
-                  isActive: inSection('/package-sizes'),
-              },
-          ]
-        : [],
-);
+const stockItems = computed<NavItem[]>(() => {
+    const permissions = page.props.auth.navigation;
+    const items: NavItem[] = [];
+    if (permissions.stockItems)
+        items.push({
+            title: 'Stock items',
+            href: '/stock-items',
+            icon: Boxes,
+            isActive: inSection('/stock-items'),
+        });
+    if (permissions.packageSizes)
+        items.push({
+            title: 'Package sizes',
+            href: '/package-sizes',
+            icon: Package,
+            isActive: inSection('/package-sizes'),
+        });
+    return items;
+});
 </script>
 
 <template>
