@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\PackageSizes\CreatePackageSize;
+use App\Actions\PackageSizes\DeletePackageSize;
 use App\Actions\PackageSizes\ListPackageSizes;
 use App\Actions\PackageSizes\UpdatePackageSize;
 use App\Http\Requests\PackageSizes\IndexPackageSizesRequest;
@@ -10,6 +11,7 @@ use App\Http\Requests\PackageSizes\StorePackageSizeRequest;
 use App\Http\Requests\PackageSizes\UpdatePackageSizeRequest;
 use App\Models\PackageSize;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -29,6 +31,7 @@ class PackageSizeController extends Controller
             'contents' => (string) $packageSize->contents,
             'contents_unit' => $packageSize->contents_unit,
             'canUpdate' => $request->user()->can('update', $packageSize),
+            'canDelete' => $request->user()->can('delete', $packageSize),
         ]);
 
         return Inertia::render('package-sizes/Index', [
@@ -105,8 +108,11 @@ class PackageSizeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PackageSize $packageSize): void
+    public function destroy(Request $request, PackageSize $packageSize, DeletePackageSize $action): RedirectResponse
     {
-        //
+        $action->delete($packageSize, $request->user());
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Unused package size deleted successfully.']);
+
+        return to_route('package-sizes.index');
     }
 }

@@ -2,11 +2,13 @@
 
 use App\Actions\PackageSizes\GetPackageSizeDefinitionKey;
 use App\Enums\RoleCode;
+use App\Models\Category;
+use App\Models\Department;
 use App\Models\PackageSize;
+use App\Models\Product;
 use App\Models\Role;
+use App\Models\StockItem;
 use App\Models\User;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Inertia\Testing\AssertableInertia as Assert;
 
 function packageSizeEditor(RoleCode $role = RoleCode::MANAGER): User
@@ -120,22 +122,17 @@ test('guests must sign in before listing or editing package sizes', function () 
 
 test('a referenced definition cannot be opened or submitted for editing', function () {
     $packageSize = packageSizeFixture();
-    // Use a minimal reference fixture until the real Stock items module is implemented.
-    Schema::create('stock_items', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('package_size_id')->constrained()->restrictOnDelete();
-    });
-    try {
-        $packageSize->getConnection()->table('stock_items')->insert(['package_size_id' => $packageSize->id]);
-        $this->actingAs(packageSizeEditor());
-        $this->get(route('package-sizes.index'))->assertInertia(fn (Assert $page) => $page
-            ->where('packageSizes.data.0.canUpdate', false));
-        $this->get(route('package-sizes.edit', $packageSize))->assertForbidden();
-        $this->patch(route('package-sizes.update', $packageSize), [
-            'package_type' => 'box', 'contents' => '12', 'contents_unit' => 'item',
-        ])->assertForbidden();
-        expect($packageSize->fresh()->definition_key)->toBe('bag:g:1000000');
-    } finally {
-        Schema::dropIfExists('stock_items');
-    }
+    // Exercise the actual stock schema rather than recreating a temporary table.
+    $department = Department::create(['name' => 'Food']);
+    $category = Category::create(['name' => 'Grains', 'department_id' => $department->id]);
+    $product = Product::create(['name' => 'Rice', 'category_id' => $category->id]);
+    StockItem::create(['product_id' => $product->id, 'package_size_id' => $packageSize->id, 'brand' => null, 'brand_key' => '']);
+    $this->actingAs(packageSizeEditor());
+    $this->get(route('package-sizes.index'))->assertInertia(fn (Assert $page) => $page
+        ->where('packageSizes.data.0.canUpdate', false));
+    $this->get(route('package-sizes.edit', $packageSize))->assertForbidden();
+    $this->patch(route('package-sizes.update', $packageSize), [
+        'package_type' => 'box', 'contents' => '12', 'contents_unit' => 'item',
+    ])->assertForbidden();
+    expect($packageSize->fresh()->definition_key)->toBe('bag:g:1000000');
 });

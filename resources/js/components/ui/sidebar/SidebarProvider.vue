@@ -19,7 +19,9 @@ const emits = defineEmits<{
   "update:open": [open: boolean]
 }>()
 
-const isMobile = useMediaQuery("(max-width: 768px)")
+// Match the server's desktop markup first, then use the real width after mounting.
+// Tailwind's md layout starts at 768px, so the drawer is only for smaller screens.
+const isMobile = useMediaQuery("(max-width: 767px)", { ssrWidth: 1024 })
 const openMobile = ref(false)
 
 const open = useVModel(props, "open", emits, {
