@@ -110,6 +110,20 @@ const accountItems = computed<NavItem[]>(() => [
         icon: CircleUserRound,
     },
 ]);
+
+// Package definitions belong to Stock Management, separate from the catalogue.
+const stockItems = computed<NavItem[]>(() =>
+    page.props.auth.navigation.packageSizes
+        ? [
+              {
+                  title: 'Package sizes',
+                  href: '/package-sizes',
+                  icon: Package,
+                  isActive: inSection('/package-sizes'),
+              },
+          ]
+        : [],
+);
 </script>
 
 <template>
@@ -137,6 +151,11 @@ const accountItems = computed<NavItem[]>(() => [
                 v-if="catalogueItems.length"
                 label="Product Catalogue"
                 :items="catalogueItems"
+            />
+            <NavMain
+                v-if="stockItems.length"
+                label="Stock Management"
+                :items="stockItems"
             />
             <NavMain label="My Account" :items="accountItems" />
         </SidebarContent>

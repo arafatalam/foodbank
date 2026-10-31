@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\PackageSizeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SetupPasswordController;
 use App\Http\Controllers\UserController;
 use App\Models\Category;
 use App\Models\Department;
+use App\Models\PackageSize;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +19,31 @@ Route::middleware(['auth'])->group(function () {
     Route::inertia('/', 'Dashboard')->name('home');
 
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+
+    // Check package-creation permission before opening the form.
+    Route::get('package-sizes', [PackageSizeController::class, 'index'])
+        ->name('package-sizes.index')
+        ->can('viewAny', PackageSize::class);
+
+    Route::get('package-sizes/create', [PackageSizeController::class, 'create'])
+        ->name('package-sizes.create')
+        ->can('create', PackageSize::class);
+
+    // Check creation permission before accepting a package submission.
+    Route::post('package-sizes', [PackageSizeController::class, 'store'])
+        ->name('package-sizes.store')
+        ->can('create', PackageSize::class);
+
+    // Protect both the edit page and its submission with the same policy ability.
+    Route::get('package-sizes/{packageSize}/edit', [PackageSizeController::class, 'edit'])
+        ->whereNumber('packageSize')
+        ->name('package-sizes.edit')
+        ->can('update', 'packageSize');
+
+    Route::patch('package-sizes/{packageSize}', [PackageSizeController::class, 'update'])
+        ->whereNumber('packageSize')
+        ->name('package-sizes.update')
+        ->can('update', 'packageSize');
 
     // -------------------------- DEPARTMENT ROUTES --------------------------//
 
