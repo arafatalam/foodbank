@@ -5,8 +5,6 @@ namespace App\Http\Middleware;
 use App\Models\Category;
 use App\Models\Department;
 use App\Models\Product;
-use App\Models\Subcategory;
-use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -53,8 +51,6 @@ class HandleInertiaRequests extends Middleware
                     'products' => $request->user()?->can('viewAny', Product::class) ?? false,
                     'departments' => $request->user()?->can('viewAny', Department::class) ?? false,
                     'categories' => $request->user()?->can('viewAny', Category::class) ?? false,
-                    'subcategories' => $request->user()?->can('viewAny', Subcategory::class) ?? false,
-                    'tags' => $request->user()?->can('viewAny', Tag::class) ?? false,
                 ],
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',

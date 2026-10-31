@@ -96,4 +96,16 @@
     body {
         @apply bg-background text-foreground;
     }
+
+    /* Give every table header the theme's matching background and text colours. */
+    thead {
+        @apply bg-accent text-accent-foreground;
+    }
+
+    /* Separate the header and body rows without doubling the table's outer border. */
+    thead > tr > th,
+    tbody > tr:not(:last-child) > th,
+    tbody > tr:not(:last-child) > td {
+        @apply border-b border-border;
+    }
 }

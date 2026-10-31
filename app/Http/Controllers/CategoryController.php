@@ -28,6 +28,7 @@ class CategoryController extends Controller
         // Send the current page and search text to Vue.
         return Inertia::render('categories/Index', [
             'categories' => $categories,
+            'canCreate' => $request->user()->can('create', Category::class),
             'search' => $filters['search'] ?? '',
         ]);
     }

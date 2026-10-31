@@ -8,6 +8,7 @@ import { onUnmounted, ref, watch } from 'vue';
 
 // Receive the department records and page information from Laravel.
 const props = defineProps<{
+    canCreate: boolean;
     search: string;
     departments: {
         data: {
@@ -71,6 +72,9 @@ defineOptions({
         <Card class="w-full max-w-3xl">
             <CardHeader>
                 <CardTitle>Departments</CardTitle>
+                <Button v-if="canCreate" as-child class="w-fit">
+                    <Link href="/departments/create">Create department</Link>
+                </Button>
             </CardHeader>
 
             <CardContent>

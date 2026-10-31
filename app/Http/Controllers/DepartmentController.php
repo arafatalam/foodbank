@@ -29,6 +29,7 @@ class DepartmentController extends Controller
         // Send the results and current search text to Vue.
         return Inertia::render('departments/Index', [
             'departments' => $departments,
+            'canCreate' => $request->user()->can('create', Department::class),
             'search' => $filters['search'] ?? '',
         ]);
     }
