@@ -18,7 +18,5 @@ export type Auth = {
         products: boolean;
         departments: boolean;
         categories: boolean;
-        subcategories: boolean;
-        tags: boolean;
     };
 };

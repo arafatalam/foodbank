@@ -1,19 +1,8 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { computed, onUnmounted, reactive, ref, watch } from 'vue';
+import { computed, onUnmounted, reactive, watch } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-    DialogClose,
-} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -29,18 +18,14 @@ type Filters = {
     search: string;
     department_id: string;
     category_id: string;
-    subcategory_id: string;
-    tag_ids: number[];
-    status: string;
 };
 const props = defineProps<{
     products: {
         data: {
             id: number;
             name: string;
-            brand: string | null;
-            tags: Choice[];
-            is_active: boolean;
+            category: string;
+            department: string;
             canUpdate: boolean;
         }[];
         current_page: number;
@@ -48,13 +33,9 @@ const props = defineProps<{
         prev_page_url: string | null;
         next_page_url: string | null;
     };
-    filters: Partial<
-        Record<Exclude<keyof Filters, 'tag_ids'>, string | number | null>
-    > & { tag_ids?: number[] | null };
+    filters: Partial<Record<keyof Filters, string | number | null>>;
     departments: Choice[];
     categories: (Choice & { department_id: number })[];
-    subcategories: (Choice & { category_id: number })[];
-    tags: Choice[];
     canCreate: boolean;
 }>();
 
@@ -63,9 +44,6 @@ function filterValues(): Filters {
         search: String(props.filters.search ?? ''),
         department_id: String(props.filters.department_id ?? 'all'),
         category_id: String(props.filters.category_id ?? 'all'),
-        subcategory_id: String(props.filters.subcategory_id ?? 'all'),
-        tag_ids: (props.filters.tag_ids ?? []).map(Number),
-        status: String(props.filters.status ?? 'all'),
     };
 }
 const filters = reactive(filterValues());
@@ -87,58 +65,6 @@ const availableCategories = computed(() =>
             String(category.department_id) === filters.department_id,
     ),
 );
-const availableSubcategories = computed(() =>
-    props.subcategories.filter((subcategory) =>
-        filters.category_id !== 'all'
-            ? String(subcategory.category_id) === filters.category_id
-            : availableCategories.value.some(
-                  (category) => category.id === subcategory.category_id,
-              ),
-    ),
-);
-// Keep dialog choices separate until the user applies them.
-const tagPanelOpen = ref(false);
-const selectedTagIds = ref<number[]>([]);
-const tagSearch = ref('');
-const appliedTagSearch = ref('');
-let tagSearchTimer: number | undefined;
-const filteredTags = computed(() =>
-    props.tags.filter((tag) =>
-        tag.name
-            .toLowerCase()
-            .includes(appliedTagSearch.value.trim().toLowerCase()),
-    ),
-);
-function searchTags() {
-    window.clearTimeout(tagSearchTimer);
-    appliedTagSearch.value = tagSearch.value;
-}
-watch(tagSearch, () => {
-    window.clearTimeout(tagSearchTimer);
-    tagSearchTimer = window.setTimeout(searchTags, 300);
-});
-watch(tagPanelOpen, (open) => {
-    window.clearTimeout(tagSearchTimer);
-    if (open) {
-        selectedTagIds.value = [...filters.tag_ids];
-        tagSearch.value = '';
-        appliedTagSearch.value = '';
-    }
-});
-function updateTag(id: number, checked: boolean) {
-    if (checked && !selectedTagIds.value.includes(id)) {
-        selectedTagIds.value.push(id);
-    } else if (!checked) {
-        selectedTagIds.value = selectedTagIds.value.filter(
-            (tagId) => tagId !== id,
-        );
-    }
-}
-function applyTags() {
-    filters.tag_ids = [...selectedTagIds.value];
-    tagPanelOpen.value = false;
-    applyFilters();
-}
 let searchTimer: number | undefined;
 function applyFilters() {
     window.clearTimeout(searchTimer);
@@ -156,17 +82,11 @@ function applyFilters() {
         preserveScroll: true,
     });
 }
-function changeFilter(
-    key: Exclude<keyof Filters, 'search' | 'tag_ids'>,
-    value: unknown,
-) {
+function changeFilter(key: Exclude<keyof Filters, 'search'>, value: unknown) {
     filters[key] = String(value);
     // Clear dependent choices before sending a single request.
     if (key === 'department_id') {
         filters.category_id = 'all';
-        filters.subcategory_id = 'all';
-    } else if (key === 'category_id') {
-        filters.subcategory_id = 'all';
     }
     applyFilters();
 }
@@ -182,7 +102,6 @@ watch(
 );
 onUnmounted(() => {
     window.clearTimeout(searchTimer);
-    window.clearTimeout(tagSearchTimer);
 });
 
 // Tell the shared layout where this page belongs.
@@ -206,19 +125,17 @@ defineOptions({
             <CardContent>
                 <form class="mt-4 grid gap-4" @submit.prevent="applyFilters">
                     <div class="grid gap-2">
-                        <Label for="product-search"
-                            >Search products or tags</Label
-                        >
+                        <Label for="product-search">Search products</Label>
                         <Input
                             id="product-search"
                             v-model="filters.search"
                             type="search"
                             maxlength="100"
-                            placeholder="Search product or tag names..."
+                            placeholder="Search product names..."
                         />
                     </div>
-                    <!-- Stack on phones and use three equal columns on wider screens. -->
-                    <div class="grid gap-4 lg:grid-cols-3">
+                    <!-- Stack on phones and use two equal columns on wider screens. -->
+                    <div class="grid gap-4 sm:grid-cols-2">
                         <div class="grid min-w-0 gap-2">
                             <Label for="product-department_id"
                                 >Department</Label
@@ -273,175 +190,6 @@ defineOptions({
                                 </SelectContent>
                             </Select>
                         </div>
-                        <div class="grid min-w-0 gap-2">
-                            <Label for="product-subcategory_id"
-                                >Subcategory</Label
-                            >
-                            <Select
-                                :model-value="filters.subcategory_id"
-                                @update:model-value="
-                                    changeFilter('subcategory_id', $event)
-                                "
-                            >
-                                <SelectTrigger
-                                    id="product-subcategory_id"
-                                    class="w-full"
-                                    ><SelectValue
-                                /></SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all"
-                                        >All subcategories</SelectItem
-                                    >
-                                    <SelectItem
-                                        v-for="choice in availableSubcategories"
-                                        :key="choice.id"
-                                        :value="String(choice.id)"
-                                        >{{ choice.name }}</SelectItem
-                                    >
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div class="grid min-w-0 gap-2">
-                            <Label for="product-tags">Tags</Label>
-                            <Dialog v-model:open="tagPanelOpen">
-                                <DialogTrigger as-child>
-                                    <Button
-                                        id="product-tags"
-                                        type="button"
-                                        variant="outline"
-                                        class="w-full justify-start"
-                                    >
-                                        {{
-                                            filters.tag_ids.length
-                                                ? `Tags (${filters.tag_ids.length} selected)`
-                                                : 'All tags'
-                                        }}
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent class="sm:max-w-2xl">
-                                    <DialogHeader>
-                                        <DialogTitle
-                                            >Filter by tags</DialogTitle
-                                        >
-                                        <DialogDescription
-                                            >Select tags, then apply your
-                                            selection to the product
-                                            list.</DialogDescription
-                                        >
-                                    </DialogHeader>
-                                    <div class="grid gap-2">
-                                        <Label for="filter-tag-search"
-                                            >Search tags</Label
-                                        >
-                                        <Input
-                                            id="filter-tag-search"
-                                            v-model="tagSearch"
-                                            type="search"
-                                            placeholder="Search tags..."
-                                            @keydown.enter.prevent="searchTags"
-                                        />
-                                    </div>
-                                    <p
-                                        v-if="tags.length === 0"
-                                        class="text-sm text-muted-foreground"
-                                    >
-                                        No tags available.
-                                    </p>
-                                    <p
-                                        v-else-if="filteredTags.length === 0"
-                                        role="status"
-                                        class="text-sm text-muted-foreground"
-                                    >
-                                        No matching tags found.
-                                    </p>
-                                    <div
-                                        v-else
-                                        class="max-h-48 overflow-y-auto rounded-lg border border-border p-3"
-                                    >
-                                        <div
-                                            class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
-                                        >
-                                            <div
-                                                v-for="tag in filteredTags"
-                                                :key="tag.id"
-                                                class="flex min-w-0 items-start gap-2"
-                                            >
-                                                <Checkbox
-                                                    :id="`filter-tag-${tag.id}`"
-                                                    class="mt-0.5"
-                                                    :model-value="
-                                                        selectedTagIds.includes(
-                                                            tag.id,
-                                                        )
-                                                    "
-                                                    @update:model-value="
-                                                        updateTag(
-                                                            tag.id,
-                                                            $event === true,
-                                                        )
-                                                    "
-                                                />
-                                                <Label
-                                                    :for="`filter-tag-${tag.id}`"
-                                                    class="min-w-0 leading-5 break-words"
-                                                    >{{ tag.name }}</Label
-                                                >
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <p
-                                        class="text-sm text-muted-foreground"
-                                        role="status"
-                                    >
-                                        {{ selectedTagIds.length }} selected
-                                    </p>
-                                    <DialogFooter>
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            @click="selectedTagIds = []"
-                                            >Clear tags</Button
-                                        >
-                                        <DialogClose as-child
-                                            ><Button
-                                                type="button"
-                                                variant="outline"
-                                                >Cancel</Button
-                                            ></DialogClose
-                                        >
-                                        <Button type="button" @click="applyTags"
-                                            >Apply tags</Button
-                                        >
-                                    </DialogFooter>
-                                </DialogContent>
-                            </Dialog>
-                        </div>
-                        <div class="grid min-w-0 gap-2">
-                            <Label for="product-status">Status</Label>
-                            <Select
-                                :model-value="filters.status"
-                                @update:model-value="
-                                    changeFilter('status', $event)
-                                "
-                            >
-                                <SelectTrigger
-                                    id="product-status"
-                                    class="w-full"
-                                    ><SelectValue
-                                /></SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all"
-                                        >All statuses</SelectItem
-                                    >
-                                    <SelectItem value="active"
-                                        >Active</SelectItem
-                                    >
-                                    <SelectItem value="inactive"
-                                        >Inactive</SelectItem
-                                    >
-                                </SelectContent>
-                            </Select>
-                        </div>
                     </div>
                 </form>
                 <!-- Keep a wide table inside its own scrolling area on phones. -->
@@ -454,9 +202,10 @@ defineOptions({
                                 <th scope="col" class="px-4 py-3">
                                     Product name
                                 </th>
-                                <th scope="col" class="px-4 py-3">Brand</th>
-                                <th scope="col" class="px-4 py-3">Tags</th>
-                                <th scope="col" class="px-4 py-3">Status</th>
+                                <th scope="col" class="px-4 py-3">Category</th>
+                                <th scope="col" class="px-4 py-3">
+                                    Department
+                                </th>
                                 <th
                                     v-if="showEditActions"
                                     scope="col"
@@ -469,7 +218,7 @@ defineOptions({
                         <tbody>
                             <tr v-if="products.data.length === 0">
                                 <td
-                                    :colspan="showEditActions ? 5 : 4"
+                                    :colspan="showEditActions ? 4 : 3"
                                     class="px-4 py-3"
                                 >
                                     No products found.
@@ -483,21 +232,10 @@ defineOptions({
                                     {{ product.name }}
                                 </td>
                                 <td class="px-4 py-3">
-                                    {{ product.brand || '—' }}
+                                    {{ product.category }}
                                 </td>
                                 <td class="px-4 py-3">
-                                    {{
-                                        product.tags
-                                            .map((tag) => tag.name)
-                                            .join(', ') || '—'
-                                    }}
-                                </td>
-                                <td class="px-4 py-3">
-                                    {{
-                                        product.is_active
-                                            ? 'Active'
-                                            : 'Inactive'
-                                    }}
+                                    {{ product.department }}
                                 </td>
                                 <td v-if="showEditActions" class="px-4 py-3">
                                     <!-- Link to this row's saved product; the route checks permission again. -->

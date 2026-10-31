@@ -8,6 +8,7 @@ import { onUnmounted, ref, watch } from 'vue';
 
 // Receive the category records and page information from Laravel.
 const props = defineProps<{
+    canCreate: boolean;
     search: string;
     categories: {
         data: {
@@ -72,6 +73,9 @@ defineOptions({
         <Card class="w-full max-w-3xl">
             <CardHeader>
                 <CardTitle>Categories</CardTitle>
+                <Button v-if="canCreate" as-child class="w-fit">
+                    <Link href="/categories/create">Create category</Link>
+                </Button>
             </CardHeader>
 
             <CardContent>

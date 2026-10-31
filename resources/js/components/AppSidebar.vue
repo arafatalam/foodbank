@@ -6,9 +6,7 @@ import {
     CircleUserRound,
     FolderTree,
     LayoutGrid,
-    Layers,
     Package,
-    Tags,
     Users,
     UserPlus,
 } from '@lucide/vue';
@@ -28,8 +26,6 @@ import { dashboard } from '@/routes';
 import { index as categoriesIndex } from '@/routes/categories';
 import { index as departmentsIndex } from '@/routes/departments';
 import { index as productsIndex } from '@/routes/products';
-import { index as subcategoriesIndex } from '@/routes/subcategories';
-import { index as tagsIndex } from '@/routes/tags';
 import { create, index, show } from '@/routes/users';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { toUrl } from '@/lib/utils';
@@ -95,18 +91,6 @@ const catalogueItems = computed<NavItem[]>(() => {
             href: categoriesIndex(),
             icon: FolderTree,
             allowed: permissions.categories,
-        },
-        {
-            title: 'Subcategories',
-            href: subcategoriesIndex(),
-            icon: Layers,
-            allowed: permissions.subcategories,
-        },
-        {
-            title: 'Tags',
-            href: tagsIndex(),
-            icon: Tags,
-            allowed: permissions.tags,
         },
     ];
     return entries

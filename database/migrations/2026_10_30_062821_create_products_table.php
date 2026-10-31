@@ -15,12 +15,14 @@ return new class extends Migration
 
             $table->id();
             $table->string('name');
-            $table->string('brand')->nullable();
-            $table->foreignId('subcategory_id')
+            $table->foreignId('category_id')
                 ->constrained()
                 ->restrictOnDelete();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+            // Enforce trimmed, case-insensitive names within each category.
+            $table->string('name_key')->storedAs('lower(trim(name))');
+            $table->unique(['category_id', 'name_key']);
         });
     }
 

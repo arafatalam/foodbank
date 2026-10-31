@@ -24,11 +24,11 @@ class Category extends Model
     }
 
     /**
-     * @return HasMany<Subcategory, $this>
+     * @return HasMany<Product, $this>
      */
-    public function subcategories(): HasMany
+    public function products(): HasMany
     {
-        // Match subcategories using their saved category_id.
-        return $this->hasMany(Subcategory::class);
+        // Find the products directly assigned to this category.
+        return $this->hasMany(Product::class);
     }
 }

@@ -4,43 +4,24 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Product extends Model
 {
-    protected $fillable = [
-        'name',
-        'brand',
-        'subcategory_id',
-        'is_active',
-    ];
+    // Keep status storage for compatibility; version one offers no status controls.
+    protected $fillable = ['name', 'category_id', 'is_active'];
 
-    /**
-     * @return array<string, string>
-     */
+    // The database uses this generated value only to enforce uniqueness.
+    protected $hidden = ['name_key'];
+
+    /** @return array<string, string> */
     protected function casts(): array
     {
-        // Read the saved status as a true-or-false value.
-        return [
-            'is_active' => 'boolean',
-        ];
+        return ['is_active' => 'boolean'];
     }
 
-    /**
-     * @return BelongsTo<Subcategory, $this>
-     */
-    public function subcategory(): BelongsTo
+    /** @return BelongsTo<Category, $this> */
+    public function category(): BelongsTo
     {
-        // Find the Subcategory using this product's subcategory_id.
-        return $this->belongsTo(Subcategory::class);
-    }
-
-    /**
-     * @return BelongsToMany<Tag, $this>
-     */
-    public function tags(): BelongsToMany
-    {
-        // Follow product_tag to this product's shared labels.
-        return $this->belongsToMany(Tag::class);
+        return $this->belongsTo(Category::class);
     }
 }

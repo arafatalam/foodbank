@@ -4,14 +4,10 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SetupPasswordController;
-use App\Http\Controllers\SubcategoryController;
-use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use App\Models\Category;
 use App\Models\Department;
 use App\Models\Product;
-use App\Models\Subcategory;
-use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -51,41 +47,6 @@ Route::middleware(['auth'])->group(function () {
         ->name('departments.update')
         ->can('update', 'department');
 
-    // -------------------------- TAG ROUTES --------------------------//
-
-    // Open the tag list only when its policy allows access.
-    Route::get('tags', [TagController::class, 'index'])
-        ->name('tags.index')
-        ->can('viewAny', Tag::class);
-
-    // Open the form only when the Tag policy allows creation.
-    Route::get('tags/create', [TagController::class, 'create'])
-        ->name('tags.create')
-        ->can('create', Tag::class);
-
-    // Save a tag only when the policy allows creation.
-    Route::post('tags', [TagController::class, 'store'])
-        ->name('tags.store')
-        ->can('create', Tag::class);
-
-    // Check update permission before showing the saved tag's form.
-    Route::get('tags/{tag}/edit', [TagController::class, 'edit'])
-        ->whereNumber('tag')
-        ->name('tags.edit')
-        ->can('update', 'tag');
-
-    // Apply the same permission check when saving a rename.
-    Route::patch('tags/{tag}', [TagController::class, 'update'])
-        ->whereNumber('tag')
-        ->name('tags.update')
-        ->can('update', 'tag');
-
-    // Check deletion permission before the action checks whether the tag is used.
-    Route::delete('tags/{tag}', [TagController::class, 'destroy'])
-        ->whereNumber('tag')
-        ->name('tags.destroy')
-        ->can('delete', 'tag');
-
     // -------------------------- CATEGORY ROUTES --------------------------//
 
     // Check list permission before loading categories or searching them.
@@ -114,31 +75,6 @@ Route::middleware(['auth'])->group(function () {
         ->whereNumber('category')
         ->name('categories.update')
         ->can('update', 'category');
-
-    // Check list permission before loading or searching Subcategory records.
-    Route::get('subcategories', [SubcategoryController::class, 'index'])
-        ->name('subcategories.index')
-        ->can('viewAny', Subcategory::class);
-
-    // Check creation permission before loading choices or saving a Subcategory.
-    Route::get('subcategories/create', [SubcategoryController::class, 'create'])
-        ->name('subcategories.create')
-        ->can('create', Subcategory::class);
-
-    Route::post('subcategories', [SubcategoryController::class, 'store'])
-        ->name('subcategories.store')
-        ->can('create', Subcategory::class);
-
-    // Check rename permission before displaying or saving the edit form.
-    Route::get('subcategories/{subcategory}/edit', [SubcategoryController::class, 'edit'])
-        ->whereNumber('subcategory')
-        ->name('subcategories.edit')
-        ->can('update', 'subcategory');
-
-    Route::patch('subcategories/{subcategory}', [SubcategoryController::class, 'update'])
-        ->whereNumber('subcategory')
-        ->name('subcategories.update')
-        ->can('update', 'subcategory');
 
     // -------------------------- PRODUCT ROUTES --------------------------//
 
