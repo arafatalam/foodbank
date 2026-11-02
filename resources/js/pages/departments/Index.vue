@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import PageHeading from '@/components/PageHeading.vue';
+import { Building2 } from '@lucide/vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { onUnmounted, ref, watch } from 'vue';
@@ -68,10 +70,14 @@ defineOptions({
     <Head title="Departments" />
 
     <!-- Match the spacing and card width of the user list. -->
-    <main class="p-4">
+    <main class="space-y-6 p-4">
+        <PageHeading
+            title="Departments"
+            description="Browse and search the departments in your product catalogue."
+            :icon="Building2"
+        />
         <Card class="w-full max-w-3xl">
-            <CardHeader>
-                <CardTitle>Departments</CardTitle>
+            <CardHeader v-if="canCreate">
                 <Button v-if="canCreate" as-child class="w-fit">
                     <Link href="/departments/create">Create department</Link>
                 </Button>

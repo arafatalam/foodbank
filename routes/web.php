@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdjustmentController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\PackageSizeController;
@@ -23,6 +24,17 @@ Route::middleware(['auth'])->group(function () {
     Route::inertia('/', 'Dashboard')->name('home');
 
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+
+
+    // Check stock-recording permission before displaying the adjustment form.
+    Route::get('adjustment/create', [AdjustmentController::class, 'create'])
+        ->name('adjustment.create')
+        ->can('create', StockEntry::class);
+
+    // Check permission before accepting adjustment data.
+    Route::post('adjustment', [AdjustmentController::class, 'store'])
+        ->name('adjustment.store')
+        ->can('create', StockEntry::class);
 
 
     // Check permission to record stock before displaying the Receive form.

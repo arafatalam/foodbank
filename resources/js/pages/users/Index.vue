@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import PageHeading from '@/components/PageHeading.vue';
+import { Users } from '@lucide/vue';
 // Reuse the card components from our other screens.
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Head, Link, router } from '@inertiajs/vue3';
@@ -73,12 +75,14 @@ defineOptions({
     <!-- Supply the page name for the browser tab. -->
     <Head title="Users" />
     <!-- Add space around the card. -->
-    <main class="p-4">
+    <main class="space-y-6 p-4">
+        <PageHeading
+            title="Users"
+            description="Browse and search the people with FoodBank accounts."
+            :icon="Users"
+        />
         <!-- Fill available width without exceeding our usual card width. -->
         <Card class="w-full max-w-6xl">
-            <CardHeader>
-                <CardTitle>Users</CardTitle>
-            </CardHeader>
 
             <CardContent>
                 <div

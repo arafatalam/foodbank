@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import PageHeading from '@/components/PageHeading.vue';
+import { Warehouse } from '@lucide/vue';
 import { Head } from '@inertiajs/vue3';
 import StockItemForm from '@/components/StockItemForm.vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,7 +22,12 @@ defineOptions({
 
 <template>
     <Head title="Create Stock Item" />
-    <main class="p-4">
+    <main class="space-y-6 p-4">
+        <PageHeading
+            title="Create stock item"
+            description="Choose a product, brand and package size for a stock item."
+            :icon="Warehouse"
+        />
         <Card class="w-full max-w-3xl">
             <CardHeader><CardTitle>Create Stock Item</CardTitle></CardHeader>
             <CardContent><StockItemForm v-bind="props" /></CardContent>

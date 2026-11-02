@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import PageHeading from '@/components/PageHeading.vue';
+import { Package } from '@lucide/vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { computed, onUnmounted, reactive, watch } from 'vue';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -114,10 +116,14 @@ defineOptions({
 
 <template>
     <Head title="Products" />
-    <main class="p-4">
+    <main class="space-y-6 p-4">
+        <PageHeading
+            title="Products"
+            description="Browse and search products across your catalogue."
+            :icon="Package"
+        />
         <Card class="w-full">
-            <CardHeader>
-                <CardTitle>Products</CardTitle>
+            <CardHeader v-if="canCreate">
                 <Button v-if="canCreate" as-child class="w-fit"
                     ><Link href="/products/create">Create product</Link></Button
                 >

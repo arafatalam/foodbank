@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import PageHeading from '@/components/PageHeading.vue';
+import { Ruler } from '@lucide/vue';
 import { Head } from '@inertiajs/vue3';
 import PackageSizeForm from '@/components/PackageSizeForm.vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,7 +26,12 @@ defineOptions({
 
 <template>
     <Head title="Edit Package Size" />
-    <main class="p-4">
+    <main class="space-y-6 p-4">
+        <PageHeading
+            title="Edit package size"
+            description="Update this package definition where changes are permitted."
+            :icon="Ruler"
+        />
         <Card class="w-full max-w-3xl">
             <CardHeader><CardTitle>Edit Package Size</CardTitle></CardHeader>
             <CardContent>

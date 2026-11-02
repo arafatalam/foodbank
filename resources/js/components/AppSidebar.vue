@@ -9,6 +9,7 @@ import {
     Package,
     PackagePlus,
     Ruler,
+    SlidersHorizontal,
     Users,
     UserPlus,
     Warehouse,
@@ -125,6 +126,14 @@ const stockItems = computed<NavItem[]>(() => {
             href: '/receive/create',
             icon: PackagePlus,
             isActive: inSection('/receive'),
+        });
+    // Use the adjustment route's stock-recording permission.
+    if (permissions.adjustment)
+        items.push({
+            title: 'Stock adjustment',
+            href: '/adjustment/create',
+            icon: SlidersHorizontal,
+            isActive: inSection('/adjustment'),
         });
     if (permissions.stockItems)
         items.push({

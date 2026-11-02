@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import PageHeading from '@/components/PageHeading.vue';
+import { Users } from '@lucide/vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
@@ -10,7 +12,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Head, useForm } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
@@ -77,11 +79,13 @@ defineOptions({
 <template>
     <!-- Supply the page name for the browser tab. -->
     <Head title="Create User" />
-    <main class="p-4">
+    <main class="space-y-6 p-4">
+        <PageHeading
+            title="Create user"
+            description="Create an account and choose its role and access status."
+            :icon="Users"
+        />
         <Card class="w-full max-w-3xl">
-            <CardHeader>
-                <CardTitle>Create User</CardTitle>
-            </CardHeader>
 
             <CardContent>
                 <div

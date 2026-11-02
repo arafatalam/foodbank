@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import PageHeading from '@/components/PageHeading.vue';
+import { Building2 } from '@lucide/vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
@@ -33,7 +35,12 @@ defineOptions({
     <Head title="Create Department" />
 
     <!-- Leave space around the card on every screen size. -->
-    <main class="p-4">
+    <main class="space-y-6 p-4">
+        <PageHeading
+            title="Create department"
+            description="Add a department to organise your product catalogue."
+            :icon="Building2"
+        />
         <!-- Fill the available width, with the same limit as other forms. -->
         <Card class="w-full max-w-3xl">
             <CardHeader>

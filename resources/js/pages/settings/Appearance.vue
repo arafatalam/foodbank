@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import AppearanceTabs from '@/components/AppearanceTabs.vue';
-import Heading from '@/components/Heading.vue';
+import PageHeading from '@/components/PageHeading.vue';
+import { Palette } from '@lucide/vue';
 import { edit } from '@/routes/appearance';
 
 defineOptions({
@@ -19,13 +20,11 @@ defineOptions({
 <template>
     <Head title="Appearance settings" />
 
-    <h1 class="sr-only">Appearance settings</h1>
-
     <div class="space-y-6">
-        <Heading
-            variant="small"
+        <PageHeading
             title="Appearance settings"
-            description="Update the appearance settings for your account"
+            description="Choose how FoodBank looks on your device."
+            :icon="Palette"
         />
         <AppearanceTabs />
     </div>

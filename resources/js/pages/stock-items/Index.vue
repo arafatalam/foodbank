@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import PageHeading from '@/components/PageHeading.vue';
+import { Warehouse } from '@lucide/vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { onUnmounted, ref, watch } from 'vue';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -87,10 +89,14 @@ defineOptions({
 
 <template>
     <Head title="Stock Items" />
-    <main class="p-4">
+    <main class="space-y-6 p-4">
+        <PageHeading
+            title="Stock items"
+            description="Check available stock by product, brand and package size."
+            :icon="Warehouse"
+        />
         <Card class="w-full">
-            <CardHeader>
-                <CardTitle>Stock items</CardTitle>
+            <CardHeader v-if="canCreate">
                 <Button v-if="canCreate" as-child class="w-fit"
                     ><Link href="/stock-items/create"
                         >Create stock item</Link

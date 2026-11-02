@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import PageHeading from '@/components/PageHeading.vue';
+import { Package } from '@lucide/vue';
 import { Head } from '@inertiajs/vue3';
 import ProductForm from '@/components/ProductForm.vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,7 +25,12 @@ defineOptions({
 </script>
 <template>
     <Head title="Edit product" />
-    <main class="p-4">
+    <main class="space-y-6 p-4">
+        <PageHeading
+            title="Edit product"
+            description="Update this product’s name and category."
+            :icon="Package"
+        />
         <Card class="w-full max-w-3xl">
             <CardHeader><CardTitle>Edit product</CardTitle></CardHeader>
             <CardContent

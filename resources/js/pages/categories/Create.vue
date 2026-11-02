@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import PageHeading from '@/components/PageHeading.vue';
+import { FolderTree } from '@lucide/vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
@@ -46,7 +48,12 @@ defineOptions({
     <Head title="Create Category" />
 
     <!-- Match Department Create's outer space and card width. -->
-    <main class="p-4">
+    <main class="space-y-6 p-4">
+        <PageHeading
+            title="Create category"
+            description="Add a category under an existing department."
+            :icon="FolderTree"
+        />
         <Card class="w-full max-w-3xl">
             <CardHeader>
                 <CardTitle>Create Category</CardTitle>

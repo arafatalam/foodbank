@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import PageHeading from '@/components/PageHeading.vue';
+import { FolderTree } from '@lucide/vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
@@ -64,7 +66,12 @@ defineOptions({
     <Head title="Edit Category" />
 
     <!-- Use the same outer spacing and card width as Edit User. -->
-    <main class="p-4">
+    <main class="space-y-6 p-4">
+        <PageHeading
+            title="Edit category"
+            description="Update this category and its department."
+            :icon="FolderTree"
+        />
         <Card class="w-full max-w-xl">
             <CardHeader>
                 <CardTitle>Edit Category</CardTitle>

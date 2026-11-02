@@ -1,9 +1,20 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { PackagePlus } from '@lucide/vue';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Head, useForm } from '@inertiajs/vue3';
+
+// Link back to stock items from the Receive page breadcrumb.
+defineOptions({
+    layout: {
+        breadcrumbs: [
+            { title: 'Stock items', href: '/stock-items' },
+            { title: 'Receive stock', href: '/receive/create' },
+        ],
+    },
+});
 
 // --- Data shapes and incoming page data ---
 
@@ -59,7 +70,7 @@ const selectedLabel = ref('');
 const selectedId = ref<number | null>(null);
 
 // Remember how many packages arrived.
-const quantity = ref(1);
+const quantity = ref<number | string>(1);
 
 // Remember a message explaining an invalid quantity.
 const quantityError = ref('');
@@ -141,6 +152,11 @@ function addItem(): void {
             // Increase the existing row by the checked number of packages.
             item.quantity = item.quantity + packages;
 
+            // Clear the selection and quantity while keeping the search results.
+            selectedId.value = null;
+            selectedLabel.value = '';
+            quantity.value = '';
+
             // Stop so we don't add another row for the same item.
             return;
         }
@@ -166,6 +182,10 @@ function addItem(): void {
         quantity: packages,
     });
 
+    // Clear the selection and quantity while keeping the search results.
+    selectedId.value = null;
+    selectedLabel.value = '';
+    quantity.value = '';
 }
 
 function submit(): void {
@@ -207,11 +227,26 @@ function submit(): void {
 
     <!-- Stack the cards on phones; align them side by side on wider screens. -->
     <main class="grid items-start gap-6 p-4 md:grid-cols-2">
+        <!-- Span both columns so the page heading stays above the receipt panels. -->
+        <header class="col-span-full flex items-start gap-3">
+            <div class="rounded-xl bg-accent p-3 text-accent-foreground">
+                <PackagePlus class="size-5" aria-hidden="true" />
+            </div>
+            <div>
+                <h1 class="text-xl font-semibold">Receive stock</h1>
+                <p class="mt-1 text-sm text-muted-foreground">
+                    Record incoming stock and add whole packages to your inventory.
+                </p>
+            </div>
+        </header>
+
         <Card class="min-w-0">
             <CardHeader>
-                <CardTitle>Receive stock</CardTitle>
+                <CardTitle>1. Choose a stock item</CardTitle>
+                <CardDescription>
+                    Search by product name or brand. Choose an item and add its package quantity to the receipt.
+                </CardDescription>
             </CardHeader>
-
             <CardContent>
                 <!-- Stack the label above its input, with a small gap. -->
                 <div class="flex flex-col gap-2">
@@ -301,7 +336,7 @@ function submit(): void {
                         <p v-if="quantityError" role="alert">
                             {{ quantityError }}
                         </p>
-                        
+
                         <Button type="button" class="self-end" @click="addItem">
                             Add item
                         </Button>

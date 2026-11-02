@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import PageHeading from '@/components/PageHeading.vue';
+import { Sprout } from '@lucide/vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { dashboard, login } from '@/routes';
 </script>
@@ -32,6 +34,13 @@ import { dashboard, login } from '@/routes';
                 </template>
             </nav>
         </header>
+        <main class="w-full max-w-[335px] lg:max-w-4xl">
+            <PageHeading
+                title="Welcome to FoodBank"
+                description="Sign in to access your FoodBank workspace."
+                :icon="Sprout"
+            />
+        </main>
         <div class="hidden h-14.5 lg:block"></div>
     </div>
 </template>

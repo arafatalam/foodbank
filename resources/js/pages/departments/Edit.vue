@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import PageHeading from '@/components/PageHeading.vue';
+import { Building2 } from '@lucide/vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
@@ -36,7 +38,12 @@ defineOptions({
     <Head title="Edit Department" />
 
     <!-- Use the same outer spacing and card width as Edit User. -->
-    <main class="p-4">
+    <main class="space-y-6 p-4">
+        <PageHeading
+            title="Edit department"
+            description="Update the name of this department."
+            :icon="Building2"
+        />
         <Card class="w-full max-w-xl">
             <CardHeader>
                 <CardTitle>Edit Department</CardTitle>

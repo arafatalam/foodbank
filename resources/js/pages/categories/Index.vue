@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import PageHeading from '@/components/PageHeading.vue';
+import { FolderTree } from '@lucide/vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { onUnmounted, ref, watch } from 'vue';
@@ -69,10 +71,14 @@ defineOptions({
     <Head title="Categories" />
 
     <!-- Match the spacing and card width of the user list. -->
-    <main class="p-4">
+    <main class="space-y-6 p-4">
+        <PageHeading
+            title="Categories"
+            description="Browse categories and the departments they belong to."
+            :icon="FolderTree"
+        />
         <Card class="w-full max-w-3xl">
-            <CardHeader>
-                <CardTitle>Categories</CardTitle>
+            <CardHeader v-if="canCreate">
                 <Button v-if="canCreate" as-child class="w-fit">
                     <Link href="/categories/create">Create category</Link>
                 </Button>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import PageHeading from '@/components/PageHeading.vue';
+import { Users } from '@lucide/vue';
 import {
     Card,
     CardAction,
@@ -41,7 +43,12 @@ defineOptions({
     <!-- Supply the page name for the browser tab. -->
     <Head title="User Details" />
     <!-- Padding around the whole page. -->
-    <main class="p-4">
+    <main class="space-y-6 p-4">
+        <PageHeading
+            title="User details"
+            description="View this person’s account details."
+            :icon="Users"
+        />
         <!-- Fill narrow screens, but limit the card width on wider screens. -->
         <Card class="w-full max-w-3xl">
             <CardHeader>

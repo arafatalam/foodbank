@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import PageHeading from '@/components/PageHeading.vue';
+import { Users } from '@lucide/vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
@@ -113,7 +115,12 @@ defineOptions({
     <!-- Supply the page name for the browser tab. -->
     <Head title="Edit User" />
     <!-- Match the Show page's surrounding space and card width. -->
-    <main class="p-4">
+    <main class="space-y-6 p-4">
+        <PageHeading
+            title="Edit user"
+            description="Update this person’s account details and permitted access."
+            :icon="Users"
+        />
         <Card class="w-full max-w-3xl">
             <CardHeader>
                 <CardTitle>Edit User</CardTitle>
