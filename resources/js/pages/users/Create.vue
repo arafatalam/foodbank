@@ -86,7 +86,6 @@ defineOptions({
             :icon="Users"
         />
         <Card class="w-full max-w-3xl">
-
             <CardContent>
                 <div
                     class="mt-4 overflow-hidden rounded-xl border border-border"

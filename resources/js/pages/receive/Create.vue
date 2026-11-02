@@ -2,7 +2,13 @@
 import { computed, ref } from 'vue';
 import { PackagePlus } from '@lucide/vue';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Head, useForm } from '@inertiajs/vue3';
 
@@ -189,7 +195,6 @@ function addItem(): void {
 }
 
 function submit(): void {
-
     // Ignore another attempt while the current request is running.
     if (form.processing) {
         return;
@@ -218,7 +223,6 @@ function submit(): void {
         },
     });
 }
-
 </script>
 
 <template>
@@ -235,7 +239,8 @@ function submit(): void {
             <div>
                 <h1 class="text-xl font-semibold">Receive stock</h1>
                 <p class="mt-1 text-sm text-muted-foreground">
-                    Record incoming stock and add whole packages to your inventory.
+                    Record incoming stock and add whole packages to your
+                    inventory.
                 </p>
             </div>
         </header>
@@ -244,7 +249,8 @@ function submit(): void {
             <CardHeader>
                 <CardTitle>1. Choose a stock item</CardTitle>
                 <CardDescription>
-                    Search by product name or brand. Choose an item and add its package quantity to the receipt.
+                    Search by product name or brand. Choose an item and add its
+                    package quantity to the receipt.
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -268,21 +274,32 @@ function submit(): void {
                             <!-- Keep the header sticky. -->
                             <thead class="sticky top-0 z-10">
                                 <tr>
-                                    <th scope="col" class="px-4 py-2">Product</th>
+                                    <th scope="col" class="px-4 py-2">
+                                        Product
+                                    </th>
                                     <th scope="col" class="px-4 py-2">Brand</th>
-                                    <th scope="col" class="px-4 py-2">Package size</th>
-                                    <th scope="col" class="px-4 py-2">Action</th>
+                                    <th scope="col" class="px-4 py-2">
+                                        Package size
+                                    </th>
+                                    <th scope="col" class="px-4 py-2">
+                                        Action
+                                    </th>
                                 </tr>
                             </thead>
 
                             <!-- Matching stock-item rows will go here next. -->
                             <tbody>
                                 <!-- Create one row for each matching stock item. -->
-                                <tr v-for="item in filteredStockItems" :key="item.id">
+                                <tr
+                                    v-for="item in filteredStockItems"
+                                    :key="item.id"
+                                >
                                     <td class="px-4 py-2">
                                         <p>{{ item.product_name }}</p>
                                         <!-- Show the department/category below the product name. -->
-                                        <p class="text-sm text-muted-foreground">
+                                        <p
+                                            class="text-sm text-muted-foreground"
+                                        >
                                             {{ item.product_path }}
                                         </p>
                                     </td>
@@ -294,11 +311,14 @@ function submit(): void {
                                     </td>
                                     <td class="px-4 py-2">
                                         <!-- Select this row's stock item for entering a quantity. -->
-                                        <Button type="button" size="sm" @click="selectItem(item)">
+                                        <Button
+                                            type="button"
+                                            size="sm"
+                                            @click="selectItem(item)"
+                                        >
                                             Add
                                         </Button>
                                     </td>
-
                                 </tr>
                             </tbody>
                         </table>
@@ -357,18 +377,25 @@ function submit(): void {
 
                 <!-- Give the header and item rows the same two-column layout. -->
                 <div v-else>
-                    <div class="overflow-x-auto rounded-xl border border-border">
+                    <div
+                        class="overflow-x-auto rounded-xl border border-border"
+                    >
                         <table class="w-full text-left">
                             <thead class="text-center">
                                 <!-- Match the search table, with Quantity as the final column. -->
                                 <tr>
-                                    <th scope="col" class="px-4 py-2">Product</th>
+                                    <th scope="col" class="px-4 py-2">
+                                        Product
+                                    </th>
                                     <th scope="col" class="px-4 py-2">Brand</th>
-                                    <th scope="col" class="px-4 py-2">Package size</th>
-                                    <th scope="col" class="px-4 py-2">Quantity</th>
+                                    <th scope="col" class="px-4 py-2">
+                                        Package size
+                                    </th>
+                                    <th scope="col" class="px-4 py-2">
+                                        Quantity
+                                    </th>
                                 </tr>
                             </thead>
-
 
                             <!-- Receipt rows will go here next. -->
                             <tbody class="text-center">
@@ -378,15 +405,21 @@ function submit(): void {
                                         <p>{{ item.product_name }}</p>
 
                                         <!-- Keep the category path beneath the product name. -->
-                                        <p class="text-sm text-muted-foreground">
+                                        <p
+                                            class="text-sm text-muted-foreground"
+                                        >
                                             {{ item.product_path }}
                                         </p>
                                     </td>
 
                                     <!-- Keep these cells in the same order as the headings. -->
                                     <td class="px-4 py-2">{{ item.brand }}</td>
-                                    <td class="px-4 py-2">{{ item.package_label }}</td>
-                                    <td class="px-4 py-2">{{ item.quantity }}</td>
+                                    <td class="px-4 py-2">
+                                        {{ item.package_label }}
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        {{ item.quantity }}
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -426,7 +459,6 @@ function submit(): void {
                         {{ form.processing ? 'Saving...' : 'Save receipt' }}
                     </Button>
                 </div>
-
             </CardContent>
         </Card>
     </main>

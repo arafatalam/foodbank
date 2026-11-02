@@ -22,13 +22,13 @@ test('security page is displayed', function () {
         );
 });
 
-test('security page requires password confirmation', function () {
+test('security page opens without a separate password confirmation', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)
         ->get(route('security.edit'));
 
-    $response->assertRedirect(route('password.confirm'));
+    $response->assertOk();
 });
 
 test('password can be updated', function () {

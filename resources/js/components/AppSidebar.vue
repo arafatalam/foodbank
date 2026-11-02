@@ -5,6 +5,7 @@ import {
     Building2,
     CircleUserRound,
     FolderTree,
+    HandHeart,
     LayoutGrid,
     Package,
     PackagePlus,
@@ -126,6 +127,14 @@ const stockItems = computed<NavItem[]>(() => {
             href: '/receive/create',
             icon: PackagePlus,
             isActive: inSection('/receive'),
+        });
+    // Use the Distribution route's stock-recording permission.
+    if (permissions.distribution)
+        items.push({
+            title: 'Distribute food',
+            href: '/distribution/create',
+            icon: HandHeart,
+            isActive: inSection('/distribution'),
         });
     // Use the adjustment route's stock-recording permission.
     if (permissions.adjustment)

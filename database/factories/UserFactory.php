@@ -36,6 +36,9 @@ class UserFactory extends Factory
             'username' => fake()->unique()->userName(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
+            // Ordinary test users represent active accounts that finished setup.
+            'is_active' => true,
+            'must_change_password' => false,
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
         ];

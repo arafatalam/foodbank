@@ -26,7 +26,6 @@ return new class extends Migration
             // Allow one optional note for the whole receipt.
             $table->text('notes')->nullable();
 
-
             $table->timestamps();
         });
     }

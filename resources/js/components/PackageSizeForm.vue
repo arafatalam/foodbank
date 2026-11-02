@@ -55,10 +55,7 @@ function submit() {
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div class="flex min-w-0 flex-col gap-2">
                 <Label for="package_type">Package type</Label>
-                <Select
-                    v-model="form.package_type"
-                    name="package_type"
-                >
+                <Select v-model="form.package_type" name="package_type">
                     <SelectTrigger
                         id="package_type"
                         class="w-full"
@@ -104,10 +101,7 @@ function submit() {
 
             <div class="flex min-w-0 flex-col gap-2">
                 <Label for="contents_unit">Contents unit</Label>
-                <Select
-                    v-model="form.contents_unit"
-                    name="contents_unit"
-                >
+                <Select v-model="form.contents_unit" name="contents_unit">
                     <SelectTrigger
                         id="contents_unit"
                         class="w-full"

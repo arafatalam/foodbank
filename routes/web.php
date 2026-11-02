@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdjustmentController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\DistributionController;
 use App\Http\Controllers\PackageSizeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReceiveController;
@@ -25,6 +26,15 @@ Route::middleware(['auth'])->group(function () {
 
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
 
+    // Check stock-recording permission before displaying the Distribution page.
+    Route::get('distribution/create', [DistributionController::class, 'create'])
+        ->name('distribution.create')
+        ->can('create', StockEntry::class);
+
+    // Check permission before accepting a distribution submission.
+    Route::post('distribution', [DistributionController::class, 'store'])
+        ->name('distribution.store')
+        ->can('create', StockEntry::class);
 
     // Check stock-recording permission before displaying the adjustment form.
     Route::get('adjustment/create', [AdjustmentController::class, 'create'])
@@ -36,7 +46,6 @@ Route::middleware(['auth'])->group(function () {
         ->name('adjustment.store')
         ->can('create', StockEntry::class);
 
-
     // Check permission to record stock before displaying the Receive form.
     Route::get('receive/create', [ReceiveController::class, 'create'])
         ->name('receive.create')
@@ -46,10 +55,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('receive', [ReceiveController::class, 'store'])
         ->name('receive.store')
         ->can('create', StockEntry::class);
-
-
-
-
 
     // -------------------------- PACKAGE SIZES ROUTES --------------------------//
 

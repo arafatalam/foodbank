@@ -83,7 +83,6 @@ defineOptions({
         />
         <!-- Fill available width without exceeding our usual card width. -->
         <Card class="w-full max-w-6xl">
-
             <CardContent>
                 <div
                     class="mt-4 overflow-hidden rounded-xl border border-border"

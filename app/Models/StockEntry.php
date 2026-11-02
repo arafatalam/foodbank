@@ -13,6 +13,8 @@ class StockEntry extends Model
         'type',
         'created_by',
         'notes',
+        // Allow a distribution to store its selected household.
+        'household_id',
     ];
 
     /**
@@ -22,6 +24,15 @@ class StockEntry extends Model
     {
         // Find the user whose ID is stored in this entry's created_by column.
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * @return BelongsTo<Household, $this>
+     */
+    public function household(): BelongsTo
+    {
+        // Find the household identified by this entry's household_id.
+        return $this->belongsTo(Household::class);
     }
 
     /**

@@ -3,13 +3,13 @@
 use App\Enums\RoleCode;
 use App\Models\Role;
 use App\Models\User;
-use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\RoleSeeder;
+use Database\Seeders\SuperAdminSeeder;
 use Illuminate\Support\Facades\Hash;
 
 test('database seeding creates one verified super admin with separate profile fields', function () {
-    $this->seed(DatabaseSeeder::class);
-    $this->seed(DatabaseSeeder::class);
+    $this->seed([RoleSeeder::class, SuperAdminSeeder::class]);
+    $this->seed([RoleSeeder::class, SuperAdminSeeder::class]);
 
     $user = User::query()->sole();
 
@@ -34,7 +34,7 @@ test('seeding preserves an existing super admin and personal password', function
     ]);
     $original = $user->fresh()->getAttributes();
 
-    $this->seed(DatabaseSeeder::class);
+    $this->seed([RoleSeeder::class, SuperAdminSeeder::class]);
 
     expect(User::query()->count())->toBe(1)
         ->and($user->fresh()->getAttributes())->toBe($original);

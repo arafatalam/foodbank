@@ -57,6 +57,7 @@ class HandleInertiaRequests extends Middleware
                     'packageSizes' => $request->user()?->can('viewAny', PackageSize::class) ?? false,
                     'stockItems' => $request->user()?->can('viewAny', StockItem::class) ?? false,
                     'receive' => $request->user()?->can('create', StockEntry::class) ?? false,
+                    'distribution' => $request->user()?->can('create', StockEntry::class) ?? false,
                     'adjustment' => $request->user()?->can('create', StockEntry::class) ?? false,
                 ],
             ],
