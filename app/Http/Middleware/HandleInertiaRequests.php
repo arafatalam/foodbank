@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Department;
 use App\Models\PackageSize;
 use App\Models\Product;
+use App\Models\StockEntry;
 use App\Models\StockItem;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -55,6 +56,7 @@ class HandleInertiaRequests extends Middleware
                     'categories' => $request->user()?->can('viewAny', Category::class) ?? false,
                     'packageSizes' => $request->user()?->can('viewAny', PackageSize::class) ?? false,
                     'stockItems' => $request->user()?->can('viewAny', StockItem::class) ?? false,
+                    'receive' => $request->user()?->can('create', StockEntry::class) ?? false,
                 ],
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',

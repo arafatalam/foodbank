@@ -20,5 +20,6 @@ export type Auth = {
         categories: boolean;
         packageSizes: boolean;
         stockItems: boolean;
+        receive: boolean;
     };
 };

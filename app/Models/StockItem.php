@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class StockItem extends Model
 {
@@ -45,5 +46,14 @@ class StockItem extends Model
     {
         // Retrieve the reusable package definition connected through package_size_id.
         return $this->belongsTo(PackageSize::class);
+    }
+
+    /**
+     * @return HasMany<StockMovement, $this>
+     */
+    public function movements(): HasMany
+    {
+        // Find every movement whose stock_item_id matches this stock item's ID.
+        return $this->hasMany(StockMovement::class);
     }
 }

@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\PackageSizeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReceiveController;
 use App\Http\Controllers\SetupPasswordController;
 use App\Http\Controllers\StockItemController;
 use App\Http\Controllers\UserController;
@@ -11,6 +12,7 @@ use App\Models\Category;
 use App\Models\Department;
 use App\Models\PackageSize;
 use App\Models\Product;
+use App\Models\StockEntry;
 use App\Models\StockItem;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +23,21 @@ Route::middleware(['auth'])->group(function () {
     Route::inertia('/', 'Dashboard')->name('home');
 
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+
+
+    // Check permission to record stock before displaying the Receive form.
+    Route::get('receive/create', [ReceiveController::class, 'create'])
+        ->name('receive.create')
+        ->can('create', StockEntry::class);
+
+    // Check permission before accepting a receipt submission.
+    Route::post('receive', [ReceiveController::class, 'store'])
+        ->name('receive.store')
+        ->can('create', StockEntry::class);
+
+
+
+
 
     // -------------------------- PACKAGE SIZES ROUTES --------------------------//
 

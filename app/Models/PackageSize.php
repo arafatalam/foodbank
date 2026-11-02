@@ -24,7 +24,7 @@ class PackageSize extends Model
     public function label(): string
     {
         // Keep the human-readable package identity the same in forms and stock lists.
-        $type = ucfirst(str_replace('_', ' ', $this->package_type));
+        $type = ucwords(str_replace('_', ' ', $this->package_type));
         $contents = rtrim(rtrim((string) $this->contents, '0'), '.');
         $unit = match ($this->contents_unit) {
             'litre' => 'L',
@@ -32,7 +32,7 @@ class PackageSize extends Model
             default => $this->contents_unit,
         };
 
-        return $type.' '.$contents.' '.$unit;
+        return $type.' of '.$contents.' '.$unit;
     }
 
     public function summaryUnit(): string

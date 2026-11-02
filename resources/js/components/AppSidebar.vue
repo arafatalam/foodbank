@@ -2,13 +2,16 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import {
-    Boxes,
+    Building2,
     CircleUserRound,
     FolderTree,
     LayoutGrid,
     Package,
+    PackagePlus,
+    Ruler,
     Users,
     UserPlus,
+    Warehouse,
 } from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -83,7 +86,7 @@ const catalogueItems = computed<NavItem[]>(() => {
         {
             title: 'Departments',
             href: departmentsIndex(),
-            icon: Boxes,
+            icon: Building2,
             allowed: permissions.departments,
         },
         {
@@ -115,18 +118,26 @@ const accountItems = computed<NavItem[]>(() => [
 const stockItems = computed<NavItem[]>(() => {
     const permissions = page.props.auth.navigation;
     const items: NavItem[] = [];
+    // Use the same permission as the Receive page and save route.
+    if (permissions.receive)
+        items.push({
+            title: 'Receive stock',
+            href: '/receive/create',
+            icon: PackagePlus,
+            isActive: inSection('/receive'),
+        });
     if (permissions.stockItems)
         items.push({
             title: 'Stock items',
             href: '/stock-items',
-            icon: Boxes,
+            icon: Warehouse,
             isActive: inSection('/stock-items'),
         });
     if (permissions.packageSizes)
         items.push({
             title: 'Package sizes',
             href: '/package-sizes',
-            icon: Package,
+            icon: Ruler,
             isActive: inSection('/package-sizes'),
         });
     return items;

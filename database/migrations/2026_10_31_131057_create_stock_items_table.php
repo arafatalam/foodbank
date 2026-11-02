@@ -30,7 +30,6 @@ return new class extends Migration
             // New choices start empty; only later stock movements may change this balance.
             $table->unsignedInteger('available_quantity')->default(0);
 
-            // Record when this stock item was created and last updated.
             $table->timestamps();
 
             // Allow each Product, package and cleaned brand combination only once.

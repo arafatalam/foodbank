@@ -8,11 +8,11 @@ use App\Models\Department;
 use App\Models\PackageSize;
 use App\Models\Product;
 use App\Models\Role;
+use App\Models\StockEntry;
 use App\Models\StockItem;
 use App\Models\StockProductSetting;
 use App\Models\User;
 use Illuminate\Database\QueryException;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -205,20 +205,24 @@ test('any movement locks identity and deletion even at zero while spelling corre
     $other = stockPackage('1');
     $this->actingAs(stockEditor())->post(route('stock-items.store'), stockInput($product, $package));
     $item = StockItem::firstOrFail();
-    // A restrictive reference fixture verifies setup guards before the later movement module exists.
-    Schema::create('stock_movements', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('stock_item_id')->constrained()->restrictOnDelete();
-    });
-    try {
-        $item->getConnection()->table('stock_movements')->insert(['stock_item_id' => $item->id]);
-        $this->patch(route('stock-items.update', $item), stockInput($product, $other))->assertSessionHasErrors('package_size_id');
-        $this->patch(route('stock-items.update', $item), stockInput($product, $package, 'TILDA'))->assertSessionHasNoErrors();
-        $this->delete(route('stock-items.destroy', $item))->assertForbidden();
-        expect(fn () => $item->delete())->toThrow(QueryException::class);
-    } finally {
-        Schema::dropIfExists('stock_movements');
-    }
+    // Use the real tables: one bag arrived, then a damaged bag was removed.
+    $receipt = StockEntry::create(['type' => 'receive', 'created_by' => auth()->id()]);
+    $receipt->movements()->create([
+        'stock_item_id' => $item->id, 'direction' => 'add',
+        'quantity' => 1, 'resulting_balance' => 1,
+    ]);
+    $adjustment = StockEntry::create([
+        'type' => 'adjust', 'created_by' => auth()->id(), 'notes' => 'Damaged bag found during count.',
+    ]);
+    $adjustment->movements()->create([
+        'stock_item_id' => $item->id, 'direction' => 'remove',
+        'quantity' => 1, 'resulting_balance' => 0,
+    ]);
+
+    $this->patch(route('stock-items.update', $item), stockInput($product, $other))->assertSessionHasErrors('package_size_id');
+    $this->patch(route('stock-items.update', $item), stockInput($product, $package, 'TILDA'))->assertSessionHasNoErrors();
+    $this->delete(route('stock-items.destroy', $item))->assertForbidden();
+    expect(fn () => $item->delete())->toThrow(QueryException::class);
 });
 
 test('measurement display calculates exactly before rounding to three decimals', function (string $contents, string $unit, int $count, string $expected) {
