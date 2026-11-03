@@ -26,9 +26,10 @@ class StockHistorySeeder extends Seeder
 
     public function run(CreateReceive $receive, CreateDistribution $distribute, CreateAdjustment $adjust): void
     {
-        // Demo stock must never be added to a production database.
-        if (! app()->environment(['local', 'testing'])) {
-            throw new RuntimeException('StockHistorySeeder is only for local or testing environments.');
+        // Allow fictional history on laptops, tests, and explicitly enabled demos.
+        if (! app()->environment(['local', 'testing'])
+            && ! config('demo.seeding_enabled')) {
+            throw new RuntimeException('Enable DEMO_SEEDING_ENABLED before seeding online demo history.');
         }
 
         // Save the complete sample together; any error also removes its opening marker.

@@ -8,5 +8,6 @@ return [
     'phone' => '+1 506-555-0100',
     'username' => 'super.admin',
     'email' => 'super.admin@example.com',
-    'password' => 'super.admin',
+    // Read this installation's password from its environment settings.
+    'password' => env('SUPER_ADMIN_PASSWORD'),
 ];
