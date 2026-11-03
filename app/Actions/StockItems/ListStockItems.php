@@ -13,7 +13,7 @@ class ListStockItems
 {
     /**
      * @param  array{search: string}  $filters
-     * @return LengthAwarePaginator<int, array{id: int, product: string, path: string, brand: ?string, package: string, available_quantity: int, total_quantity: string, canUpdate: bool, canDelete: bool}>
+     * @return LengthAwarePaginator<int, array{id: int, product: string, path: string, brand: string, package: string, available_quantity: int, total_quantity: string, canUpdate: bool, canDelete: bool, canViewHistory: bool}>
      */
     public function get(array $filters, User $actor): LengthAwarePaginator
     {
@@ -38,19 +38,22 @@ class ListStockItems
             ->orWhereRaw('LOWER(brand) LIKE ?', [$search]));
     }
 
-    /** @return array{id: int, product: string, path: string, brand: ?string, package: string, available_quantity: int, total_quantity: string, canUpdate: bool, canDelete: bool} */
+    /** @return array{id: int, product: string, path: string, brand: string, package: string, available_quantity: int, total_quantity: string, canUpdate: bool, canDelete: bool, canViewHistory: bool} */
     private function row(StockItem $item, User $actor): array
     {
         return [
             'id' => $item->id,
             'product' => $item->product->name,
             'path' => $item->product->category->department->name.' / '.$item->product->category->name,
-            'brand' => $item->brand,
+            // Send a readable label when no brand was recorded.
+            'brand' => $item->brand ?? 'Unbranded',
             'package' => $item->packageSize->label(),
             'available_quantity' => $item->available_quantity,
             'total_quantity' => $this->totalQuantity($item),
             'canUpdate' => $actor->can('update', $item),
             'canDelete' => $actor->can('delete', $item),
+            // Ask the policy whether this user may view this item's history.
+            'canViewHistory' => $actor->can('viewHistory', $item),
         ];
     }
 

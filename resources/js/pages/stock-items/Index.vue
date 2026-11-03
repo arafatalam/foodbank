@@ -20,12 +20,13 @@ type StockRow = {
     id: number;
     product: string;
     path: string;
-    brand: string | null;
+    brand: string;
     package: string;
     available_quantity: number;
     total_quantity: string;
     canUpdate: boolean;
     canDelete: boolean;
+    canViewHistory: boolean;
 };
 const props = defineProps<{
     canCreate: boolean;
@@ -126,11 +127,10 @@ defineOptions({
                 </p>
                 <!-- Scroll this container instead of widening the entire phone page. -->
                 <div class="overflow-x-auto rounded-xl border border-border">
-                    <table class="w-full text-left">
-                        <thead>
+                    <table class="w-full text-center">
+                        <thead class="text-center">
                             <tr>
-                                <th scope="col" class="px-4 py-3">Product</th>
-                                <th scope="col" class="px-4 py-3">Brand</th>
+                                <th scope="col" class="px-4 py-3 text-left">Product</th>
                                 <th scope="col" class="px-4 py-3">
                                     Package size
                                 </th>
@@ -152,31 +152,44 @@ defineOptions({
                         <tbody>
                             <tr v-if="!stockItems.data.length">
                                 <td
-                                    :colspan="canCreate ? 6 : 5"
+                                    :colspan="canCreate ? 5 : 4"
                                     class="px-4 py-3"
                                 >
                                     No stock items found.
                                 </td>
                             </tr>
                             <tr v-for="item in stockItems.data" :key="item.id">
-                                <td class="px-4 py-3">
-                                    <p>{{ item.product }}</p>
+                                <td class="px-4 py-3 text-left">
+                                    <!-- Keep the brand beside the product, styled like the path below. -->
+                                    <p>
+                                        {{ item.product }}
+                                        <span class="text-sm text-muted-foreground">{{ item.brand }}</span>
+                                    </p>
                                     <p class="text-sm text-muted-foreground">
                                         {{ item.path }}
                                     </p>
                                 </td>
-                                <td class="px-4 py-3">
-                                    {{ item.brand ?? 'Unbranded' }}
-                                </td>
                                 <td class="px-4 py-3">{{ item.package }}</td>
-                                <td class="px-4 py-3">
+                                <td class="px-4 py-3 text-center">
                                     {{ item.available_quantity }}
                                 </td>
-                                <td class="px-4 py-3 whitespace-nowrap">
+                                <td class="px-4 py-3 text-center whitespace-nowrap">
                                     {{ item.total_quantity }}
                                 </td>
                                 <td v-if="canCreate" class="px-4 py-3">
-                                    <div class="flex gap-2">
+                                    <div class="flex flex-wrap justify-center gap-2">
+                                        <!-- Show this item's history link only when its policy permits it. -->
+                                        <Button
+                                            v-if="item.canViewHistory"
+                                            as-child
+                                            variant="outline"
+                                            size="sm"
+                                        >
+                                            <Link
+                                                :href="`/stock-items/${item.id}/history`"
+                                                :aria-label="`View history for ${item.product}, ${item.brand}, ${item.package}`"
+                                            >View history</Link>
+                                        </Button>
                                         <Button
                                             v-if="item.canUpdate"
                                             as-child
@@ -184,7 +197,7 @@ defineOptions({
                                             size="sm"
                                             ><Link
                                                 :href="`/stock-items/${item.id}/edit`"
-                                                :aria-label="`Edit ${item.product}, ${item.brand ?? 'Unbranded'}, ${item.package}`"
+                                                :aria-label="`Edit ${item.product}, ${item.brand}, ${item.package}`"
                                                 >Edit</Link
                                             ></Button
                                         >
@@ -194,7 +207,7 @@ defineOptions({
                                             :disabled="
                                                 !item.canDelete || processing
                                             "
-                                            :aria-label="`Delete ${item.product}, ${item.brand ?? 'Unbranded'}, ${item.package}`"
+                                            :aria-label="`Delete ${item.product}, ${item.brand}, ${item.package}`"
                                             @click="confirmDelete(item)"
                                             >Delete</Button
                                         >
@@ -239,7 +252,7 @@ defineOptions({
                     <DialogTitle>Delete unused stock item?</DialogTitle>
                     <DialogDescription v-if="deleting"
                         >{{ deleting.product }} ·
-                        {{ deleting.brand ?? 'Unbranded' }} ·
+                        {{ deleting.brand }} ·
                         {{ deleting.package }} will be deleted. The catalogue
                         Product and Package size will remain.</DialogDescription
                     >

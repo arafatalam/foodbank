@@ -110,6 +110,12 @@ Route::middleware(['auth'])->group(function () {
             ->name('stock-items.store')
             ->can('create', StockItem::class);
 
+        // Check history permission before running the controller method.
+        Route::get('{stockItem}/history', [StockItemController::class, 'history'])
+            ->whereNumber('stockItem')
+            ->name('stock-items.history')
+            ->can('viewHistory', 'stockItem');
+
         Route::get('{stockItem}/edit', [StockItemController::class, 'edit'])
             ->whereNumber('stockItem')
             ->name('stock-items.edit')

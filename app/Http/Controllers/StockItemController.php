@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\StockItems\CreateStockItem;
 use App\Actions\StockItems\DeleteStockItem;
+use App\Actions\StockItems\GetStockItemHistory;
 use App\Actions\StockItems\ListStockItems;
 use App\Actions\StockItems\UpdateStockItem;
 use App\Http\Requests\StockItems\IndexStockItemsRequest;
@@ -31,6 +32,15 @@ class StockItemController extends Controller
             'search' => $filters['search'],
             'canCreate' => $request->user()->can('create', StockItem::class),
         ]);
+    }
+
+    public function history(StockItem $stockItem, GetStockItemHistory $action): Response
+    {
+        // Ask the action to prepare the selected item's page data.
+        $pageData = $action->get($stockItem);
+
+        // Send the prepared props to the History Vue page.
+        return Inertia::render('stock-items/History', $pageData);
     }
 
     /**

@@ -29,6 +29,15 @@ class StockItemPolicy
         return false;
     }
 
+    public function viewHistory(User $user, StockItem $stockItem): bool
+    {
+        // Only Super Admins and Managers may view stock history.
+        return in_array($user->role->code, [
+            RoleCode::SUPER_ADMIN,
+            RoleCode::MANAGER,
+        ], true);
+    }
+
     /**
      * Determine whether the user can create models.
      */
