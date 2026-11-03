@@ -17,12 +17,15 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             SuperAdminSeeder::class,
-            DemoUserSeeder::class,
+            UserSeeder::class,
+            DemoAccountSetupSeeder::class,
             DepartmentSeeder::class,
             CategorySeeder::class,
             ProductSeeder::class,
             PackageSizeSeeder::class,
             StockItemSeeder::class,
+            HouseholdSeeder::class,
+            StockHistorySeeder::class,
         ]);
     }
 }

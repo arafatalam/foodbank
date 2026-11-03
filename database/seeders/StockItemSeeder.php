@@ -86,12 +86,13 @@ class StockItemSeeder extends Seeder
             ->where('package_size_id', $package->id)->where('brand_key', $brandKey)->exists();
     }
 
+    // Share these identities with StockHistorySeeder so both use the same choices.
     /** @return list<array{string, string, string, ?string, string, string, string}> */
-    private function examples(): array
+    public function examples(): array
     {
         $examples = [];
 
-        // Sixty Products get one choice each; the first 39 also get an unbranded choice.
+        // One hundred Products get one choice each; the first 39 also get an unbranded choice.
         foreach ($this->sampleProducts() as $index => [$department, $category, $name, $brand, $package]) {
             $examples[] = [$department, $category, $name, $brand, ...$package];
             if ($index < 39) {
@@ -99,7 +100,7 @@ class StockItemSeeder extends Seeder
             }
         }
 
-        // A smaller Rice package makes the final total 60 + 39 + 1 = 100 choices.
+        // A smaller Rice package makes the final total 100 + 39 + 1 = 140 choices.
         $examples[] = ['Food', 'Grains', 'Rice', 'Tilda', 'bag', '1', 'kg'];
 
         return $examples;
@@ -108,6 +109,9 @@ class StockItemSeeder extends Seeder
     /** @return list<array{string, string, string, string, array{string, string, string}}> */
     private function sampleProducts(): array
     {
+        // Leave ten Products without stock setup for later practice: Barley, Cornmeal,
+        // Split Peas, Curry Sauce, Pancake Mix, Turkey, Berries, Cabbage,
+        // Frozen Meals and Black Pepper.
         // Each row: catalogue path, sample brand and an existing reusable package.
         // Package tuples contain type, contents and unit; opening stock still belongs to Receive.
         return [
@@ -171,6 +175,48 @@ class StockItemSeeder extends Seeder
             ['Household Supplies', 'Cleaning Supplies', 'All-Purpose Cleaner', 'Lysol', ['bottle', '750', 'ml']],
             ['Household Supplies', 'Paper Products', 'Paper Towels', 'Bounty', ['box', '6', 'item']],
             ['Household Supplies', 'Storage Supplies', 'Garbage Bags', 'Glad', ['box', '24', 'item']],
+
+            // Extend stock setup to 100 distinct catalogue Products using existing packages.
+            ['Food', 'Beans and Pulses', 'Baked Beans', 'Heinz', ['can', '400', 'g']],
+            ['Food', 'Canned Foods', 'Canned Peaches', 'Del Monte', ['can', '400', 'g']],
+            ['Food', 'Canned Foods', 'Canned Pineapple', 'Dole', ['can', '400', 'g']],
+            ['Food', 'Soups and Sauces', 'Tomato Paste', 'Unico', ['can', '200', 'g']],
+            ['Food', 'Breakfast and Spreads', 'Honey', 'Billy Bee', ['jar', '500', 'g']],
+            ['Food', 'Dairy and Eggs', 'Butter', 'Lactantia', ['packet', '250', 'g']],
+            ['Food', 'Dairy and Eggs', 'Margarine', 'Becel', ['jar', '500', 'g']],
+            ['Food', 'Meat and Alternatives', 'Ground Beef', 'Prairie Select', ['packet', '500', 'g']],
+            ['Food', 'Meat and Alternatives', 'Fish', 'Ocean Harvest', ['bag', '1', 'kg']],
+            ['Food', 'Meat and Alternatives', 'Tofu', 'Sunrise', ['packet', '250', 'g']],
+            ['Food', 'Fruit', 'Oranges', 'Orchard Select', ['individual_item', '1', 'item']],
+            ['Food', 'Fruit', 'Pears', 'Orchard Select', ['individual_item', '1', 'item']],
+            ['Food', 'Fruit', 'Grapes', 'Orchard Select', ['bag', '500', 'g']],
+            ['Food', 'Vegetables', 'Carrots', 'Farm Fresh', ['bag', '1', 'kg']],
+            ['Food', 'Vegetables', 'Onions', 'Farm Fresh', ['bag', '1', 'kg']],
+            ['Food', 'Vegetables', 'Broccoli', 'Farm Fresh', ['individual_item', '1', 'item']],
+            ['Food', 'Vegetables', 'Spinach', 'Farm Fresh', ['bag', '250', 'g']],
+            ['Food', 'Vegetables', 'Tomatoes', 'Farm Fresh', ['bag', '500', 'g']],
+            ['Food', 'Bakery', 'Rolls', 'Country Hearth', ['bag', '500', 'g']],
+            ['Food', 'Bakery', 'Tortillas', 'Casa Pantry', ['packet', '500', 'g']],
+            ['Food', 'Bakery', 'Bagels', 'Country Hearth', ['bag', '500', 'g']],
+            ['Food', 'Bakery', 'Crackers', 'Christie', ['box', '250', 'g']],
+            ['Food', 'Frozen Foods', 'Frozen Fruit', 'Orchard Select', ['bag', '1', 'kg']],
+            ['Food', 'Beverages', 'Fruit Juice', 'Sun-Rype', ['carton', '1', 'litre']],
+            ['Food', 'Beverages', 'Tea', 'Red Rose', ['box', '250', 'g']],
+            ['Food', 'Beverages', 'Coffee', 'Nabob', ['bag', '500', 'g']],
+            ['Food', 'Beverages', 'Plant-Based Drink', 'Silk', ['carton', '1', 'litre']],
+            ['Food', 'Cooking Essentials', 'Sugar', 'Redpath', ['bag', '2', 'kg']],
+            ['Food', 'Cooking Essentials', 'Salt', 'Windsor', ['box', '500', 'g']],
+            ['Food', 'Cooking Essentials', 'Vinegar', 'Allen’s', ['bottle', '1', 'litre']],
+            ['Food', 'Cooking Essentials', 'Baking Powder', 'Magic', ['can', '200', 'g']],
+            ['Personal Care', 'Body Care', 'Deodorant', 'Dove', ['packet', '50', 'g']],
+            ['Personal Care', 'Body Care', 'Body Lotion', 'Vaseline', ['bottle', '500', 'ml']],
+            ['Personal Care', 'Menstrual Care', 'Tampons', 'Tampax', ['box', '24', 'item']],
+            ['Personal Care', 'Menstrual Care', 'Panty Liners', 'Carefree', ['box', '24', 'item']],
+            ['Personal Care', 'Incontinence Care', 'Incontinence Pads', 'Tena', ['box', '24', 'item']],
+            ['Household Supplies', 'Cleaning Supplies', 'Cleaning Sponges', 'Scotch-Brite', ['box', '6', 'item']],
+            ['Household Supplies', 'Paper Products', 'Facial Tissues', 'Scotties', ['box', '24', 'item']],
+            ['Household Supplies', 'Storage Supplies', 'Food Storage Bags', 'Ziploc', ['box', '24', 'item']],
+            ['Household Supplies', 'Storage Supplies', 'Aluminium Foil', 'Alcan', ['individual_item', '1', 'item']],
         ];
     }
 }
