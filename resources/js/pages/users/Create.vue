@@ -16,6 +16,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Head, useForm } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
+import { nextTick } from 'vue';
 
 // Starting values for a new account.
 const form = useForm({
@@ -31,7 +32,7 @@ function submit() {
     form.post('/users');
 }
 
-function updatePhone(value: string | number) {
+async function updatePhone(value: string | number) {
     // Convert the incoming value to text.
     const text = String(value);
 
@@ -54,7 +55,11 @@ function updatePhone(value: string | number) {
         formatted += '-' + digits.slice(6);
     }
 
-    // Add the country prefix, or leave an empty field.
+    // Let the shared Input receive the typed value before correcting it.
+    form.phone = text;
+    await nextTick();
+
+    // Refresh the display even when cleaning returns the previous phone number.
     form.phone = digits ? '+1 ' + formatted : '';
 }
 

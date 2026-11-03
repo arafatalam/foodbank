@@ -4,6 +4,7 @@ import { Users } from '@lucide/vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
+import { nextTick } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -75,7 +76,7 @@ function submit() {
 }
 
 // Use the same Canadian phone formatting as the Create page.
-function updatePhone(value: string | number) {
+async function updatePhone(value: string | number) {
     // Convert the input to text and remove an existing country prefix.
     const text = String(value);
     const localNumber = text.startsWith('+1') ? text.slice(2) : text;
@@ -96,7 +97,11 @@ function updatePhone(value: string | number) {
         formatted += '-' + digits.slice(6);
     }
 
-    // Add the Canadian prefix, or leave an empty field.
+    // Let the shared Input receive the typed value before correcting it.
+    form.phone = text;
+    await nextTick();
+
+    // Refresh the display even when cleaning returns the previous phone number.
     form.phone = digits ? '+1 ' + formatted : '';
 }
 

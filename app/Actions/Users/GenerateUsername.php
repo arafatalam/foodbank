@@ -49,9 +49,9 @@ class GenerateUsername
             ]);
         }
 
-        $base = mb_strtolower($firstName.'.'.$lastName);
-
-        $username = $base;
+        $firstName = strtolower($firstName);
+        $lastName = strtolower($lastName);
+        $username = $this->fitUsername($firstName, $lastName);
         $suffix = 1;
 
         // Keep trying while another account already has this username.
@@ -66,12 +66,27 @@ class GenerateUsername
                 ->exists()
         ) {
             // Try the next numbered username.
-            $username = $base.'.'.str_pad((string) $suffix, 2, '0', STR_PAD_LEFT);
+            $ending = '.'.str_pad((string) $suffix, 2, '0', STR_PAD_LEFT);
+            $username = $this->fitUsername($firstName, $lastName, $ending);
 
             // Prepare the next number if that username is also taken.
             $suffix++;
         }
 
         return $username;
+    }
+
+    private function fitUsername(string $firstName, string $lastName, string $ending = ''): string
+    {
+        // Reserve space for the name separator and any duplicate-number ending.
+        $available = 255 - 1 - strlen($ending);
+
+        // Share the space between both names, giving unused space to the other.
+        $firstLength = min(strlen($firstName), intdiv($available, 2));
+        $lastLength = min(strlen($lastName), $available - $firstLength);
+        $firstLength = min(strlen($firstName), $available - $lastLength);
+
+        // Shorten only the generated login name, keeping both name parts.
+        return substr($firstName, 0, $firstLength).'.'.substr($lastName, 0, $lastLength).$ending;
     }
 }

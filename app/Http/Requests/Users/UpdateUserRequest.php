@@ -69,4 +69,18 @@ class UpdateUserRequest extends FormRequest
             'is_active' => ['required', 'boolean'],
         ];
     }
+
+    /** @return array{first_name: string, last_name: string, email: string, phone: string, role_id: int, is_active: bool} */
+    public function userData(): array
+    {
+        // These fields have passed validation; provide consistent types to the action.
+        return [
+            'first_name' => $this->string('first_name')->toString(),
+            'last_name' => $this->string('last_name')->toString(),
+            'email' => $this->string('email')->toString(),
+            'phone' => $this->string('phone')->toString(),
+            'role_id' => $this->integer('role_id'),
+            'is_active' => $this->boolean('is_active'),
+        ];
+    }
 }

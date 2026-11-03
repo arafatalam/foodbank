@@ -200,102 +200,124 @@ defineOptions({
                                     :id="`product-stock-items-${productTotal.id}`"
                                 >
                                     <td colspan="3" class="px-4 py-3">
-                                        <!-- Inset the breakdown and visually connect it to its Product. -->
-                                        <section
-                                            class="space-y-3 rounded-lg border-l-2 border-border bg-muted/50 p-4 sm:ml-6"
-                                            :aria-labelledby="`stock-breakdown-heading-${productTotal.id}`"
+                                        <!-- Reserve up to three columns, but shade only the columns in use. -->
+                                        <div
+                                            class="grid grid-cols-1 gap-3 sm:ml-6 md:grid-cols-2 xl:grid-cols-3"
                                         >
-                                            <h2
-                                                :id="`stock-breakdown-heading-${productTotal.id}`"
-                                                class="text-sm font-medium"
+                                            <section
+                                                class="min-w-0 space-y-3 rounded-lg border-l-2 border-border bg-muted/50 p-4"
+                                                :class="{
+                                                    'md:col-span-2':
+                                                        productTotal.stock_items
+                                                            .length >= 2,
+                                                    'xl:col-span-3':
+                                                        productTotal.stock_items
+                                                            .length >= 3,
+                                                }"
+                                                :aria-labelledby="`stock-breakdown-heading-${productTotal.id}`"
                                             >
-                                                Stock breakdown
-                                                <span class="sr-only"
-                                                    >for
-                                                    {{
-                                                        productTotal.product
-                                                    }}</span
+                                                <h2
+                                                    :id="`stock-breakdown-heading-${productTotal.id}`"
+                                                    class="text-sm font-medium"
                                                 >
-                                            </h2>
-                                            <!-- One column on phones, two on medium screens, three on wide screens. -->
-                                            <ul
-                                                class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3"
-                                            >
-                                                <li
-                                                    v-for="stockItem in productTotal.stock_items"
-                                                    :key="stockItem.id"
-                                                    class="min-w-0 space-y-3 rounded-lg border border-border bg-card p-4"
-                                                >
-                                                    <!-- Keep details left and the history button at the top right. -->
-                                                    <div
-                                                        class="flex items-start justify-between gap-3"
+                                                    Stock breakdown
+                                                    <span class="sr-only"
+                                                        >for
+                                                        {{
+                                                            productTotal.product
+                                                        }}</span
                                                     >
+                                                </h2>
+                                                <!-- Match the card columns to the panel's occupied columns. -->
+                                                <ul
+                                                    class="grid grid-cols-1 gap-3"
+                                                    :class="{
+                                                        'md:grid-cols-2':
+                                                            productTotal
+                                                                .stock_items
+                                                                .length >= 2,
+                                                        'xl:grid-cols-3':
+                                                            productTotal
+                                                                .stock_items
+                                                                .length >= 3,
+                                                    }"
+                                                >
+                                                    <li
+                                                        v-for="stockItem in productTotal.stock_items"
+                                                        :key="stockItem.id"
+                                                        class="min-w-0 space-y-3 rounded-lg border border-border bg-card p-4"
+                                                    >
+                                                        <!-- Keep details left and the history button at the top right. -->
                                                         <div
-                                                            class="min-w-0 space-y-1"
+                                                            class="flex items-start justify-between gap-3"
+                                                        >
+                                                            <div
+                                                                class="min-w-0 space-y-1"
+                                                            >
+                                                                <p
+                                                                    class="font-medium break-words"
+                                                                >
+                                                                    {{
+                                                                        stockItem.brand
+                                                                    }}
+                                                                </p>
+                                                                <p
+                                                                    class="text-sm break-words text-muted-foreground"
+                                                                >
+                                                                    {{
+                                                                        stockItem.package
+                                                                    }}
+                                                                </p>
+                                                            </div>
+                                                            <!-- Link to this specific stock item's protected History page. -->
+                                                            <Button
+                                                                v-if="
+                                                                    stockItem.canViewHistory
+                                                                "
+                                                                as-child
+                                                                variant="outline"
+                                                                size="sm"
+                                                                class="shrink-0"
+                                                            >
+                                                                <Link
+                                                                    :href="`/stock-items/${stockItem.id}/history?from=product-totals`"
+                                                                    :aria-label="`Show history for ${productTotal.product}, ${stockItem.brand}, ${stockItem.package}`"
+                                                                    >Show
+                                                                    history</Link
+                                                                >
+                                                            </Button>
+                                                        </div>
+                                                        <!-- Wrap the count and total when a card is narrow. -->
+                                                        <div
+                                                            class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-sm"
                                                         >
                                                             <p
-                                                                class="font-medium break-words"
+                                                                class="text-muted-foreground"
                                                             >
                                                                 {{
-                                                                    stockItem.brand
+                                                                    stockItem.available_quantity
                                                                 }}
+                                                                {{
+                                                                    stockItem.available_quantity ===
+                                                                    1
+                                                                        ? 'package'
+                                                                        : 'packages'
+                                                                }}
+                                                                available
                                                             </p>
                                                             <p
-                                                                class="text-sm break-words text-muted-foreground"
+                                                                class="font-semibold"
                                                             >
                                                                 {{
-                                                                    stockItem.package
+                                                                    stockItem.total_quantity
                                                                 }}
+                                                                total
                                                             </p>
                                                         </div>
-                                                        <!-- Link to this specific stock item's protected History page. -->
-                                                        <Button
-                                                            v-if="
-                                                                stockItem.canViewHistory
-                                                            "
-                                                            as-child
-                                                            variant="outline"
-                                                            size="sm"
-                                                            class="shrink-0"
-                                                        >
-                                                            <Link
-                                                                :href="`/stock-items/${stockItem.id}/history?from=product-totals`"
-                                                                :aria-label="`Show history for ${productTotal.product}, ${stockItem.brand}, ${stockItem.package}`"
-                                                                >Show
-                                                                history</Link
-                                                            >
-                                                        </Button>
-                                                    </div>
-                                                    <!-- Wrap the count and total when a card is narrow. -->
-                                                    <div
-                                                        class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-sm"
-                                                    >
-                                                        <p
-                                                            class="text-muted-foreground"
-                                                        >
-                                                            {{
-                                                                stockItem.available_quantity
-                                                            }}
-                                                            {{
-                                                                stockItem.available_quantity ===
-                                                                1
-                                                                    ? 'package'
-                                                                    : 'packages'
-                                                            }}
-                                                            available
-                                                        </p>
-                                                        <p
-                                                            class="font-semibold"
-                                                        >
-                                                            {{
-                                                                stockItem.total_quantity
-                                                            }}
-                                                            total
-                                                        </p>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                        </section>
+                                                    </li>
+                                                </ul>
+                                            </section>
+                                        </div>
                                     </td>
                                 </tr>
                             </template>

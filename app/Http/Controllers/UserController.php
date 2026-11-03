@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Users\GenerateUsername;
 use App\Actions\Users\GetAssignableRoles;
 use App\Actions\Users\ListUsers;
+use App\Actions\Users\SaveUser;
 use App\Http\Requests\Users\IndexUsersRequest;
 use App\Http\Requests\Users\StoreUserRequest;
 use App\Http\Requests\Users\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -49,24 +47,10 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUserRequest $request, GenerateUsername $generateUsername): RedirectResponse
+    public function store(StoreUserRequest $request, SaveUser $saveUser): RedirectResponse
     {
-        $data = $request->validated();
-
-        $data['username'] = $generateUsername->generate(
-            $data['first_name'],
-            $data['last_name']
-        );
-
-        $data['password'] = config('auth.initial_password');
-
-        $data['must_change_password'] = true;
-
-        $user = User::create($data);
-
-        // Record that this administrator-created account is treated as verified.
-        $user->email_verified_at = now();
-        $user->save();
+        // Generate and save together, retrying a concurrent username conflict.
+        $user = $saveUser->save($request->userData());
 
         Inertia::flash('toast', [
             'type' => 'success',
@@ -131,43 +115,10 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest $request, User $user, GenerateUsername $generateUsername): RedirectResponse
+    public function update(UpdateUserRequest $request, User $user, SaveUser $saveUser): RedirectResponse
     {
-        // Collect only the fields that passed our validation rules.
-        $data = $request->validated();
-
-        // Compare the submitted names with the saved names.
-        $nameChanged = $data['first_name'] !== $user->first_name
-            || $data['last_name'] !== $user->last_name;
-
-        // Generate a username only when at least one name changed.
-        if ($nameChanged) {
-            $data['username'] = $generateUsername->generate(
-                $data['first_name'],
-                $data['last_name'],
-                $user
-            );
-        }
-
-        // Save the account and end its sessions together when deactivating it.
-        DB::transaction(function () use ($user, $data): void {
-            $deactivating = $user->is_active && ! (bool) $data['is_active'];
-
-            // Make existing Remember me cookies unusable after deactivation.
-            if ($deactivating) {
-                $user->setRememberToken(Str::random(60));
-            }
-
-            $user->update($data);
-
-            // Remove this account's sessions from the configured database store.
-            if ($deactivating && config('session.driver') === 'database') {
-                DB::connection(config('session.connection'))
-                    ->table(config('session.table', 'sessions'))
-                    ->where('user_id', $user->id)
-                    ->delete();
-            }
-        });
+        // The action retries name conflicts and preserves deactivation safeguards.
+        $user = $saveUser->save($request->userData(), $user);
 
         // Include the resulting username in the success message.
         Inertia::flash('toast', [
