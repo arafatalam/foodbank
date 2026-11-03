@@ -38,6 +38,7 @@ type StockItem = {
 // Use the named type to describe the stockItem page prop.
 const props = defineProps<{
     stockItem: StockItem;
+    backLink: { label: string; href: string };
     movements: {
         data: Movement[];
         // Laravel supplies the page numbers and links alongside the movements.
@@ -99,8 +100,10 @@ defineOptions({
                 :icon="History"
             />
             <Button as-child variant="outline" size="sm">
-                <Link href="/stock-items"
-                    ><ArrowLeft aria-hidden="true" />Back to stock items</Link
+                <Link :href="props.backLink.href"
+                    ><ArrowLeft aria-hidden="true" />{{
+                        props.backLink.label
+                    }}</Link
                 >
             </Button>
         </div>

@@ -34,10 +34,15 @@ class StockItemController extends Controller
         ]);
     }
 
-    public function history(StockItem $stockItem, GetStockItemHistory $action): Response
+    public function history(Request $request, StockItem $stockItem, GetStockItemHistory $action): Response
     {
-        // Ask the action to prepare the selected item's page data.
-        $pageData = $action->get($stockItem);
+        // Choose only a known origin; missing or unexpected values return to Stock items.
+        $origin = $request->query('from') === 'product-totals'
+            ? 'product-totals'
+            : 'stock-items';
+
+        // Ask the action to prepare the selected item's page data and return link.
+        $pageData = $action->get($stockItem, $origin);
 
         // Send the prepared props to the History Vue page.
         return Inertia::render('stock-items/History', $pageData);

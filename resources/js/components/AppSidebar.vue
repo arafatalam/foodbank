@@ -151,6 +151,14 @@ const stockItems = computed<NavItem[]>(() => {
             icon: Warehouse,
             isActive: inSection('/stock-items'),
         });
+    // Match the server permission protecting the Product totals page.
+    if (permissions.productTotals)
+        items.push({
+            title: 'Product totals',
+            href: '/product-totals',
+            icon: Package,
+            isActive: inSection('/product-totals'),
+        });
     if (permissions.packageSizes)
         items.push({
             title: 'Package sizes',

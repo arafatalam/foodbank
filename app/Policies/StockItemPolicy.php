@@ -21,6 +21,16 @@ class StockItemPolicy
         ], true);
     }
 
+    public function viewTotals(User $user): bool
+    {
+        // Allow all three agreed roles to view combined Product totals.
+        return in_array($user->role->code, [
+            RoleCode::SUPER_ADMIN,
+            RoleCode::MANAGER,
+            RoleCode::VOLUNTEER,
+        ], true);
+    }
+
     /**
      * Determine whether the user can view the model.
      */

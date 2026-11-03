@@ -6,6 +6,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DistributionController;
 use App\Http\Controllers\PackageSizeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductTotalController;
 use App\Http\Controllers\ReceiveController;
 use App\Http\Controllers\SetupPasswordController;
 use App\Http\Controllers\StockItemController;
@@ -25,6 +26,11 @@ Route::middleware(['auth'])->group(function () {
     Route::inertia('/', 'Dashboard')->name('home');
 
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+
+    // Check totals permission before asking the controller to display the page.
+    Route::get('product-totals', [ProductTotalController::class, 'index'])
+        ->name('product-totals.index')
+        ->can('viewTotals', StockItem::class);
 
     // Check stock-recording permission before displaying the Distribution page.
     Route::get('distribution/create', [DistributionController::class, 'create'])

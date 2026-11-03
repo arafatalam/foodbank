@@ -20,6 +20,7 @@ export type Auth = {
         categories: boolean;
         packageSizes: boolean;
         stockItems: boolean;
+        productTotals: boolean;
         receive: boolean;
         distribution: boolean;
         adjustment: boolean;

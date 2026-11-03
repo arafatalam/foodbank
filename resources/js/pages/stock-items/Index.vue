@@ -130,7 +130,9 @@ defineOptions({
                     <table class="w-full text-center">
                         <thead class="text-center">
                             <tr>
-                                <th scope="col" class="px-4 py-3 text-left">Product</th>
+                                <th scope="col" class="px-4 py-3 text-left">
+                                    Product
+                                </th>
                                 <th scope="col" class="px-4 py-3">
                                     Package size
                                 </th>
@@ -163,7 +165,10 @@ defineOptions({
                                     <!-- Keep the brand beside the product, styled like the path below. -->
                                     <p>
                                         {{ item.product }}
-                                        <span class="text-sm text-muted-foreground">{{ item.brand }}</span>
+                                        <span
+                                            class="text-sm text-muted-foreground"
+                                            >{{ item.brand }}</span
+                                        >
                                     </p>
                                     <p class="text-sm text-muted-foreground">
                                         {{ item.path }}
@@ -173,11 +178,15 @@ defineOptions({
                                 <td class="px-4 py-3 text-center">
                                     {{ item.available_quantity }}
                                 </td>
-                                <td class="px-4 py-3 text-center whitespace-nowrap">
+                                <td
+                                    class="px-4 py-3 text-center whitespace-nowrap"
+                                >
                                     {{ item.total_quantity }}
                                 </td>
                                 <td v-if="canCreate" class="px-4 py-3">
-                                    <div class="flex flex-wrap justify-center gap-2">
+                                    <div
+                                        class="flex flex-wrap justify-center gap-2"
+                                    >
                                         <!-- Show this item's history link only when its policy permits it. -->
                                         <Button
                                             v-if="item.canViewHistory"
@@ -186,9 +195,10 @@ defineOptions({
                                             size="sm"
                                         >
                                             <Link
-                                                :href="`/stock-items/${item.id}/history`"
+                                                :href="`/stock-items/${item.id}/history?from=stock-items`"
                                                 :aria-label="`View history for ${item.product}, ${item.brand}, ${item.package}`"
-                                            >View history</Link>
+                                                >View history</Link
+                                            >
                                         </Button>
                                         <Button
                                             v-if="item.canUpdate"
@@ -251,8 +261,7 @@ defineOptions({
                 <DialogHeader>
                     <DialogTitle>Delete unused stock item?</DialogTitle>
                     <DialogDescription v-if="deleting"
-                        >{{ deleting.product }} ·
-                        {{ deleting.brand }} ·
+                        >{{ deleting.product }} · {{ deleting.brand }} ·
                         {{ deleting.package }} will be deleted. The catalogue
                         Product and Package size will remain.</DialogDescription
                     >

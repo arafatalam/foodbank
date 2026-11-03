@@ -11,10 +11,11 @@ class GetStockItemHistory
     /**
      * @return array{
      *     stockItem: array{id: int, product: string, path: string, brand: string, package: string, available_quantity: int},
+     *     backLink: array{label: string, href: string},
      *     movements: LengthAwarePaginator<int, array<string, mixed>>
      * }
      */
-    public function get(StockItem $stockItem): array
+    public function get(StockItem $stockItem, string $origin = 'stock-items'): array
     {
         // Follow the Product's category, then that category's department.
         $category = $stockItem->product->category;
@@ -31,11 +32,15 @@ class GetStockItemHistory
         ];
 
         // Ask this action's helper to prepare the movement page.
-        $movements = $this->getMovements($stockItem);
+        $movements = $this->getMovements($stockItem, $origin);
 
         // Return both sets of prepared data as page props.
         return [
             'stockItem' => $stockItemData,
+            // Use fixed destinations rather than accepting an arbitrary return URL.
+            'backLink' => $origin === 'product-totals'
+                ? ['label' => 'Back to Product totals', 'href' => '/product-totals']
+                : ['label' => 'Back to stock items', 'href' => '/stock-items'],
             'movements' => $movements,
         ];
     }
@@ -48,7 +53,7 @@ class GetStockItemHistory
      *
      * @return LengthAwarePaginator<int, array<string, mixed>>
      */
-    private function getMovements(StockItem $stockItem): LengthAwarePaginator
+    private function getMovements(StockItem $stockItem, string $origin): LengthAwarePaginator
     {
         // Retrieve only this item's movements, newest first, ten per page.
         return $stockItem->movements()
@@ -56,6 +61,8 @@ class GetStockItemHistory
             ->orderByDesc('created_at')
             ->orderByDesc('id')
             ->paginate(10)
+            // Keep the return destination when navigating through movement pages.
+            ->appends(['from' => $origin])
             // Prepare each movement using the dedicated formatting helper.
             ->through(fn (StockMovement $movement): array => $this->formatMovement($movement));
     }
