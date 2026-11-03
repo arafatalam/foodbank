@@ -18,6 +18,6 @@ class LoginResponse implements LoginResponseContract
         // Keep Fortify's JSON response for clients that explicitly request it.
         return $request->wantsJson()
             ? response()->json(['two_factor' => false])
-            : to_route('dashboard');
+            : to_route('home');
     }
 }

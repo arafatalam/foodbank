@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Route;
 // Require sign-in; email verification is not required for now.
 Route::middleware(['auth'])->group(function () {
 
-    Route::inertia('/', 'Dashboard')->name('home');
+    Route::inertia('/', 'Landing')->name('home');
 
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
 
